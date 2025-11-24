@@ -89,7 +89,7 @@ Fonctionnalités prévues dans les versions avancées :
 
 ### Frontend (React)
 
-* React + Vite / CRA
+* React + Vite
 * Gestion d'état (Zustand, Redux ou Context)
 * Appels API
 * UI simple et responsive
@@ -111,6 +111,11 @@ Fonctionnalités prévues dans les versions avancées :
   * configuration de la base de données
   * migrations
 * **Démonstration orale** : 10–15 minutes
+
+## 📁 Dépôts Git
+
+* **Backend Symfony :** [https://github.com/S-TH0MAS/Project1.git](https://github.com/S-TH0MAS/Project1.git)
+* **Frontend React :** [https://github.com/Benjamin-Nativel/Project1-Front](https://github.com/Benjamin-Nativel/Project1-Front)
 
 ## ✨ Conclusion
 
