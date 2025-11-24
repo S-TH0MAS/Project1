@@ -28,7 +28,7 @@ L'application sera conçue **en mobile first** afin d'assurer une expérience op
 ## 🖼️ Maquettes
 
 * **Vers la maquette fonctionnelle** [https://S-TH0MAS.github.io/Project1](https://S-TH0MAS.github.io/Project1)
-* **Vers les images** [https://github.com/S-TH0MAS/Project1.git/.source/maquettes/img](https://github.com/S-TH0MAS/Project1.git/.source/maquettes/img)
+* **Vers les images** [https://github.com/S-TH0MAS/Project1/tree/master/.source/maquettes/img](https://github.com/S-TH0MAS/Project1/tree/master/.source/maquettes/img)
 
 ---
 
