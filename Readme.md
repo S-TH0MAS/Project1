@@ -90,6 +90,7 @@ Fonctionnalités prévues dans les versions avancées :
 ### Frontend (React)
 
 * React + Vite
+* Tailwind
 * Gestion d'état (Zustand, Redux ou Context)
 * Appels API
 * UI simple et responsive
