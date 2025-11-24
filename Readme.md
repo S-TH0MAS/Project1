@@ -18,6 +18,20 @@ L'application sera conçue **en mobile first** afin d'assurer une expérience op
 
 ---
 
+## 📁 Dépôts Git
+
+* **Backend Symfony :** [https://github.com/S-TH0MAS/Project1.git](https://github.com/S-TH0MAS/Project1.git)
+* **Frontend React :** [https://github.com/Benjamin-Nativel/Project1-Front](https://github.com/Benjamin-Nativel/Project1-Front)
+
+---
+
+## 🖼️ Maquettes
+
+* **Vers la maquette fonctionnelle** [https://S-TH0MAS.github.io/Project1](https://S-TH0MAS.github.io/Project1)
+* **Vers les images** [https://github.com/S-TH0MAS/Project1.git/.source/maquettes/img](https://github.com/S-TH0MAS/Project1.git/.source/maquettes/img)
+
+---
+
 ## 🔐 Fonctionnalités principales
 
 ### 1. Authentification utilisateur
@@ -104,7 +118,6 @@ Fonctionnalités prévues dans les versions avancées :
 
 ## 📦 Livrables (à venir)
 
-* **Maquettes** : images ou lien Figma
 * **Modélisation** : liste des entités + schéma UML/ER *(facultatif)*
 * **Code source** dans un dépôt Git avec README contenant :
 
@@ -112,11 +125,6 @@ Fonctionnalités prévues dans les versions avancées :
   * configuration de la base de données
   * migrations
 * **Démonstration orale** : 10–15 minutes
-
-## 📁 Dépôts Git
-
-* **Backend Symfony :** [https://github.com/S-TH0MAS/Project1.git](https://github.com/S-TH0MAS/Project1.git)
-* **Frontend React :** [https://github.com/Benjamin-Nativel/Project1-Front](https://github.com/Benjamin-Nativel/Project1-Front)
 
 ## ✨ Conclusion
 

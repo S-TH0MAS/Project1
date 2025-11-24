@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Super Dashboard - Food Inventory Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .bottom-sheet {
+      transition: transform 0.3s ease-in-out;
+    }
+    .bottom-sheet-backdrop {
+      transition: opacity 0.3s ease-in-out;
+    }
+  </style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#10b981", // emerald-500 for a slightly brighter sage green
+            "background-light": "#f8fafc", // slate-50
+            "background-dark": "#0f172a", // slate-900
+            "surface-light": "#ffffff",
+            "surface-dark": "#1e293b", // slate-800
+            "text-light": "#1e293b", // slate-800
+            "text-dark": "#e2e8f0", // slate-200
+            "text-secondary-light": "#64748b", // slate-500
+            "text-secondary-dark": "#94a3b8", // slate-400
+            "destructive": "#ef4444", // red-500
+          },
+          fontFamily: {
+            "display": ["Work Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.75rem", // rounded-lg
+            "lg": "1rem", // rounded-xl
+            "xl": "1.5rem", // rounded-2xl
+            "2xl": "2rem", // rounded-3xl
+            "full": "9999px",
+          },
+          boxShadow: {
+            'soft': '0 4px 12px 0 rgba(0, 0, 0, 0.05)',
+            'soft-dark': '0 4px 12px 0 rgba(0, 0, 0, 0.15)',
+            'fab': '0 8px 20px 0 rgba(16, 185, 129, 0.3)',
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-black font-display">
+<div class="relative mx-auto flex h-auto min-h-screen w-full max-w-md flex-col overflow-x-hidden group/design-root bg-background-light dark:bg-background-dark">
+<header class="sticky top-0 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="flex items-center gap-3 p-4 pb-3">
+<a href="5-recipe_prompt.html" class="flex items-center justify-center size-10 text-text-light dark:text-text-dark">
+<span class="material-symbols-outlined">arrow_back</span>
+</a>
+<p class="text-text-light dark:text-text-dark tracking-light text-xl font-bold leading-tight">Recipe Generator</p>
+</div>
+</header>
+<main class="flex-1 pb-28">
+<div class="p-4">
+<h1 class="text-2xl font-bold text-text-light dark:text-text-dark">Creamy Chicken &amp; Broccoli Rice</h1>
+<p class="text-text-secondary-light dark:text-text-secondary-dark mt-1">A simple, delicious, and complete meal using your ingredients.</p>
+</div>
+<div class="px-4">
+<div class="relative w-full aspect-video rounded-xl overflow-hidden">
+<img alt="Creamy Chicken &amp; Broccoli Rice" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKybb9PQsZb84mVdLeLWrKS0sQtAF7LiPczQ0jtSwCngoHNisOcYBwovcz0St9dB00xazAxfb73cfP7431O3wk84M3Ls_AHWoKIZz2nDsn2dVmacndZ3Jh0cKycVOj7MtLfouorBLNCuNkB3nE5sqhnKtwu4i7NO6Uad18_DPhEWbS-wJhS5b712l9t6cIXUktLqwHxY-wjHStEYbNJwtrc0eeGrluVRU_fLjGZ-0XYSn7xGNq7hck0vdD1CBAocK5rMyKL50OUrcK"/>
+</div>
+</div>
+<div class="p-4 space-y-6">
+<div>
+<h2 class="text-lg font-bold text-text-light dark:text-text-dark mb-3">Ingredients</h2>
+<ul class="space-y-2 text-text-secondary-light dark:text-text-secondary-dark">
+<li class="flex items-start">
+<span class="material-symbols-outlined text-primary text-base mr-2 mt-0.5">check_circle</span>
+<span>2 boneless, skinless chicken breasts, diced</span>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-primary text-base mr-2 mt-0.5">check_circle</span>
+<span>1 cup of white rice</span>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-primary text-base mr-2 mt-0.5">check_circle</span>
+<span>1 head of broccoli, cut into florets</span>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-primary text-base mr-2 mt-0.5">check_circle</span>
+<span>1 cup heavy cream</span>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-primary text-base mr-2 mt-0.5">check_circle</span>
+<span>1/2 cup grated Parmesan cheese</span>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-primary text-base mr-2 mt-0.5">check_circle</span>
+<span>2 cloves garlic, minced</span>
+</li>
+<li class="flex items-start">
+<span class="material-symbols-outlined text-primary text-base mr-2 mt-0.5">check_circle</span>
+<span>Salt and pepper to taste</span>
+</li>
+</ul>
+</div>
+<div>
+<h2 class="text-lg font-bold text-text-light dark:text-text-dark mb-3">Instructions</h2>
+<ol class="space-y-4 text-text-light dark:text-text-dark">
+<li class="flex items-start">
+<div class="flex-shrink-0 flex items-center justify-center size-6 bg-primary text-white font-bold text-sm rounded-full mr-3 mt-0.5">1</div>
+<p class="text-text-secondary-light dark:text-text-secondary-dark">Cook the rice according to package directions. While it cooks, season the diced chicken with salt and pepper.</p>
+</li>
+<li class="flex items-start">
+<div class="flex-shrink-0 flex items-center justify-center size-6 bg-primary text-white font-bold text-sm rounded-full mr-3 mt-0.5">2</div>
+<p class="text-text-secondary-light dark:text-text-secondary-dark">In a large skillet, cook the chicken over medium-high heat until browned and cooked through. Remove and set aside.</p>
+</li>
+<li class="flex items-start">
+<div class="flex-shrink-0 flex items-center justify-center size-6 bg-primary text-white font-bold text-sm rounded-full mr-3 mt-0.5">3</div>
+<p class="text-text-secondary-light dark:text-text-secondary-dark">In the same skillet, sauté the minced garlic for about 30 seconds. Add the broccoli florets and cook until tender-crisp.</p>
+</li>
+<li class="flex items-start">
+<div class="flex-shrink-0 flex items-center justify-center size-6 bg-primary text-white font-bold text-sm rounded-full mr-3 mt-0.5">4</div>
+<p class="text-text-secondary-light dark:text-text-secondary-dark">Reduce heat to low, pour in the heavy cream and bring to a simmer. Stir in the Parmesan cheese until melted and the sauce has thickened slightly.</p>
+</li>
+<li class="flex items-start">
+<div class="flex-shrink-0 flex items-center justify-center size-6 bg-primary text-white font-bold text-sm rounded-full mr-3 mt-0.5">5</div>
+<p class="text-text-secondary-light dark:text-text-secondary-dark">Return the chicken to the skillet. Add the cooked rice and stir everything together until well combined and heated through. Season with additional salt and pepper if needed. Serve immediately.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="p-4">
+<a href="5-recipe_prompt.html" class="w-full py-4 px-4 rounded-xl text-center font-bold bg-primary text-white text-lg block">Generate Another Recipe</a>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md border-t border-slate-200/50 dark:border-slate-700/50 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-sm">
+<div class="flex h-20 items-center justify-around px-4">
+<a class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark" href="3-inventory.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-xs font-medium">Inventaire</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-primary" href="5-recipe_prompt.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+<span class="text-xs font-medium">Recette</span>
+</a>
+</div>
+</nav>
+<div class="fixed inset-0 z-50 flex items-end pointer-events-none">
+<div class="absolute inset-0 bg-black/40 bottom-sheet-backdrop opacity-0"></div>
+<div class="relative w-full bg-background-light dark:bg-background-dark rounded-t-2xl p-4 transform translate-y-full bottom-sheet pointer-events-auto">
+<div class="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-slate-600 mb-4"></div>
+<h2 class="text-xl font-bold text-text-light dark:text-text-dark mb-6 text-center">Edit Item: 🍎 Apples</h2>
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1" for="item-name">Item Name</label>
+<input class="form-input w-full rounded-xl border-slate-300 dark:border-slate-600 bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark focus:border-primary focus:ring-primary" id="item-name" type="text" value="Apples"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1">Quantity</label>
+<div class="flex items-center justify-center gap-4">
+<button class="flex items-center justify-center size-12 rounded-full bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="text-2xl font-bold text-text-light dark:text-text-dark w-16 text-center">5</span>
+<button class="flex items-center justify-center size-12 rounded-full bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1" for="exp-date">Expiration Date</label>
+<input class="form-input w-full rounded-xl border-slate-300 dark:border-slate-600 bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark focus:border-primary focus:ring-primary" id="exp-date" type="date" value="2024-08-15"/>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<button class="py-3 px-4 rounded-xl text-center font-bold bg-destructive/10 text-destructive">Delete</button>
+<button class="py-3 px-4 rounded-xl text-center font-bold bg-primary text-white">Save Changes</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>
