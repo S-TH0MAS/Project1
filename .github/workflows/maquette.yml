@@ -1,0 +1,38 @@
+# Nom du workflow
+name: Deploy Maquettes HTML to GitHub Pages
+
+# Déclencheur : se lance à chaque push sur la branche "master"
+on:
+  push:
+    branches: [ "master" ]
+
+# Permissions requises pour le déploiement sur GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Tâches à exécuter
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Récupère le code de votre dépôt
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Configure GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 3. Prépare le dossier HTML pour le déploiement
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Spécifie le dossier à déployer directement
+          path: './.source/maquettes/html'
+
+      # 5. Déploie le site sur GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
