@@ -93,6 +93,7 @@ php bin/console doctrine:migrations:migrate
 * **ci** – modifications pour l’intégration continue
 * **chore** – maintenance, actions annexes
 * **revert** – annulation d’un commit précédent
+* **assets** – Ajout/Modification des fichier images,Logo, etc..
 
 Format requis :
 
