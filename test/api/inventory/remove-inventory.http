@@ -1,0 +1,105 @@
+### Variables
+@baseUrl = http://localhost:8000
+@contentType = application/json
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQwNTIxODQsImV4cCI6MTc2NDA1NTc4NCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.bAlhVOc9RhJJwRjD5CtDKVRp4bT1nnt9y0oJIm5BGmgaa5Ybh9xBlOKVvfjDbgCdIIF8ZCnlQ4mKmng3fkamBWZMPotc_gw9A5sjM8hLsbdTa1gq-lPTtFyKSog2fjBFmYiletRyAXoi-EiIqq-kg-_7CWZ3nM5_d9Ta_-bCZqCF3PND4Z405S5PuXOjSIGaGYGbK_sACvpUDKUO1I41QmGxXuu1kWoLbu6BQymn0dvghUzcDzAp9gOT1mY4CNnWpw3GWnBA2lXh2J0JqO63hVPwYVi99jvHuH5OsUUkFfnTuOwghFEvhaMD9wqBMox2_V92iM5NdTxZ-Mu2HUawiA
+
+### IMPORTANT: Obtenez d'abord un token via POST /user/login
+### Remplacez {{token}} ci-dessous par le token obtenu, ou utilisez une variable d'environnement
+
+### Retirer une quantité d'un item (mise à jour de l'inventory)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "itemId": 1,
+  "quantity": 2
+}
+
+### Retirer une quantité qui supprime l'inventory (quantity finale <= 0)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "itemId": 1,
+  "quantity": 10
+}
+
+### Retirer d'un inventory inexistant (devrait retourner 200 avec message)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "itemId": 999,
+  "quantity": 5
+}
+
+### Test avec itemId manquant (devrait retourner 400)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 5
+}
+
+### Test avec quantity manquant (devrait retourner 400)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "itemId": 1
+}
+
+### Test avec quantity <= 0 (devrait retourner 400)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "itemId": 1,
+  "quantity": 0
+}
+
+### Test avec quantity négative (devrait retourner 400)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "itemId": 1,
+  "quantity": -5
+}
+
+### Test avec itemId inexistant (devrait retourner 404)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "itemId": 99999,
+  "quantity": 5
+}
+
+### Test sans token (devrait retourner 401)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+
+{
+  "itemId": 1,
+  "quantity": 5
+}
+
+### Test avec token invalide (devrait retourner 401)
+POST {{baseUrl}}/api/inventories/remove
+Content-Type: {{contentType}}
+Authorization: Bearer invalid_token_here
+
+{
+  "itemId": 1,
+  "quantity": 5
+}
+
