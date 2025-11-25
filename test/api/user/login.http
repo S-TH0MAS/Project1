@@ -3,12 +3,16 @@
 @contentType = application/json
 
 ### Login - Obtenir un token JWT
+### IMPORTANT: Après avoir exécuté cette requête, copiez le token de la réponse JSON
+### et remplacez {{token}} dans les autres fichiers de test (ex: ../category/get-categories.http)
+### Format de la réponse: {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."}
+### Copiez uniquement la valeur du token (sans les guillemets)
 POST {{baseUrl}}/user/login
 Content-Type: {{contentType}}
 
 {
-  "email": "test@example.com",
-  "password": "password123"
+  "email": "test@test.mail",
+  "password": "azer1234"
 }
 
 ### Login avec un autre utilisateur
