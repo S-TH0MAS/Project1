@@ -1,0 +1,50 @@
+### Variables
+@baseUrl = http://localhost:8000
+@contentType = application/json
+
+### Test Gemini avec un prompt personnalisé
+POST {{baseUrl}}/test/gemini
+Content-Type: {{contentType}}
+
+{
+  "prompt": "Bonjour, peux-tu me donner une recette simple ?"
+}
+
+### Test Gemini avec le prompt par défaut (hello)
+POST {{baseUrl}}/test/gemini
+Content-Type: {{contentType}}
+
+{}
+
+### Test Gemini avec un prompt vide (utilisera le défaut)
+POST {{baseUrl}}/test/gemini
+Content-Type: {{contentType}}
+
+{
+  "prompt": ""
+}
+
+### Test Gemini avec un prompt long
+POST {{baseUrl}}/test/gemini
+Content-Type: {{contentType}}
+
+{
+  "prompt": "Quelles sont les meilleures pratiques pour conserver les aliments frais plus longtemps ?"
+}
+
+### Test Gemini avec un prompt de recette
+POST {{baseUrl}}/test/gemini
+Content-Type: {{contentType}}
+
+{
+  "prompt": "Donne-moi une recette de pâtes carbonara"
+}
+
+### Test avec body invalide (devrait gérer l'erreur)
+POST {{baseUrl}}/test/gemini
+Content-Type: {{contentType}}
+
+{
+  "invalid": "data"
+}
+
