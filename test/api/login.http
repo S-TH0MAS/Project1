@@ -1,0 +1,49 @@
+### Variables
+@baseUrl = http://localhost:8000
+@contentType = application/json
+
+### Login - Obtenir un token JWT
+POST {{baseUrl}}/user/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Login avec un autre utilisateur
+POST {{baseUrl}}/user/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@example.com",
+  "password": "admin123"
+}
+
+### Test avec identifiants incorrects (devrait retourner 401)
+POST {{baseUrl}}/user/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "wrongpassword"
+}
+
+### Test avec utilisateur inexistant (devrait retourner 401)
+POST {{baseUrl}}/user/login
+Content-Type: {{contentType}}
+
+{
+  "email": "nonexistent@example.com",
+  "password": "password123"
+}
+
+### Test avec données manquantes (devrait retourner 400)
+POST {{baseUrl}}/user/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com"
+}
+
+

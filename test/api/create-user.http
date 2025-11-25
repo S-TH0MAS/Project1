@@ -1,0 +1,53 @@
+### Variables
+@baseUrl = http://localhost:8000
+@contentType = application/json
+
+### Créer un nouveau client
+POST {{baseUrl}}/user/create
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "name": "John Doe"
+}
+
+
+### Test avec email déjà existant (devrait retourner 409)
+POST {{baseUrl}}/user/create
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "name": "Jane Doe"
+}
+
+### Test avec données manquantes - email manquant (devrait retourner 400)
+POST {{baseUrl}}/user/create
+Content-Type: {{contentType}}
+
+{
+  "password": "password123",
+  "name": "Incomplete User"
+}
+
+### Test avec données manquantes - password manquant (devrait retourner 400)
+POST {{baseUrl}}/user/create
+Content-Type: {{contentType}}
+
+{
+  "email": "incomplete@example.com",
+  "name": "Incomplete User"
+}
+
+### Test avec données manquantes - name manquant (devrait retourner 400)
+POST {{baseUrl}}/user/create
+Content-Type: {{contentType}}
+
+{
+  "email": "incomplete@example.com",
+  "password": "password123"
+}
+
+
