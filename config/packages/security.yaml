@@ -34,6 +34,10 @@ security:
         api:
             pattern: ^/api
             stateless: true
+            provider: app_user_provider
+            # Ajoutez cette ligne pour activer votre authentificateur perso
+            custom_authenticators:
+                - App\Security\DevAuthenticator
             jwt: ~
 
         # 4. Le firewall général (ou "catch-all"), souvent nommé 'main', en dernier.
@@ -46,6 +50,7 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

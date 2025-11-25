@@ -3,3 +3,10 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+api_controllers:
+    resource:
+        path: ../src/Controller/ApiController/  # On cible le sous-dossier
+        namespace: App\Controller\ApiController
+    type: attribute
+    prefix: /api
