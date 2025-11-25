@@ -7,6 +7,7 @@ Ce dossier contient les fichiers de configuration pour tester l'API avec PHPStor
 - **user/** : Tests pour les routes utilisateur (création de client, login)
 - **category/** : Tests pour les routes catégorie (liste des catégories)
 - **inventory/** : Tests pour les routes inventaire (liste des items et inventaire du client)
+- **generate_recipe/** : Tests pour la génération de recettes via Gemini
 
 ## Utilisation dans PHPStorm
 
@@ -35,6 +36,7 @@ Ce dossier contient les fichiers de configuration pour tester l'API avec PHPStor
    - Utilisez le token pour accéder aux routes protégées :
      - `category/get-categories.http` : Liste des catégories
      - `inventory/get-inventories.http` : Liste des items et inventaire du client
+     - `generate_recipe/generate-recipe.http` : Génération de recettes via Gemini
 
 ## Documentation détaillée
 
@@ -42,4 +44,5 @@ Pour plus de détails sur chaque groupe de routes, consultez les README.md dans 
 - **user/README.md** : Documentation des routes utilisateur
 - **category/README.md** : Documentation des routes catégorie
 - **inventory/README.md** : Documentation des routes inventaire
+- **generate_recipe/README.md** : Documentation de la génération de recettes
 
