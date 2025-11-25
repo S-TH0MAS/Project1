@@ -19,12 +19,19 @@ class Client extends User
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: ClientItem::class, orphanRemoval: true)]
     private Collection $clientItems;
 
+    /**
+     * @var Collection<int, Inventory>
+     */
+    #[ORM\OneToMany(targetEntity: Inventory::class, mappedBy: 'client', orphanRemoval: true)]
+    private Collection $inventories;
+
     public function __construct()
     {
         // Important : Si User a un constructeur, on l'appelle
         // parent::__construct();
 
         $this->clientItems = new ArrayCollection();
+        $this->inventories = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -63,6 +70,36 @@ class Client extends User
             // set the owning side to null (unless already changed)
             if ($clientItem->getClient() === $this) {
                 $clientItem->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Inventory>
+     */
+    public function getInventories(): Collection
+    {
+        return $this->inventories;
+    }
+
+    public function addInventory(Inventory $inventory): static
+    {
+        if (!$this->inventories->contains($inventory)) {
+            $this->inventories->add($inventory);
+            $inventory->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInventory(Inventory $inventory): static
+    {
+        if ($this->inventories->removeElement($inventory)) {
+            // set the owning side to null (unless already changed)
+            if ($inventory->getClient() === $this) {
+                $inventory->setClient(null);
             }
         }
 
