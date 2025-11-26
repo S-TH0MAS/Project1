@@ -1,0 +1,104 @@
+### Variables
+@baseUrl = http://localhost:8000
+@contentType = application/json
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQwNTIxODQsImV4cCI6MTc2NDA1NTc4NCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.bAlhVOc9RhJJwRjD5CtDKVRp4bT1nnt9y0oJIm5BGmgaa5Ybh9xBlOKVvfjDbgCdIIF8ZCnlQ4mKmng3fkamBWZMPotc_gw9A5sjM8hLsbdTa1gq-lPTtFyKSog2fjBFmYiletRyAXoi-EiIqq-kg-_7CWZ3nM5_d9Ta_-bCZqCF3PND4Z405S5PuXOjSIGaGYGbK_sACvpUDKUO1I41QmGxXuu1kWoLbu6BQymn0dvghUzcDzAp9gOT1mY4CNnWpw3GWnBA2lXh2J0JqO63hVPwYVi99jvHuH5OsUUkFfnTuOwghFEvhaMD9wqBMox2_V92iM5NdTxZ-Mu2HUawiA
+
+### IMPORTANT: Obtenez d'abord un token via POST /user/login
+### Remplacez {{token}} ci-dessous par le token obtenu, ou utilisez une variable d'environnement
+
+### Créer un nouvel item avec category par ID (succès)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+
+{
+  "name": "Apples",
+  "category": 1
+}
+
+### Créer un nouvel item avec category par nom (succès)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "Bananes",
+  "category": "Fruits"
+}
+
+### Test avec name manquant (devrait retourner 400)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "category": 1
+}
+
+### Test avec category manquante (devrait retourner 400)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "Apples"
+}
+
+### Test avec name vide (devrait retourner 400)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "",
+  "category": 1
+}
+
+### Test avec name contenant uniquement des espaces (devrait retourner 400)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "   ",
+  "category": 1
+}
+
+### Test avec category ID inexistante (devrait retourner 404)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "Apples",
+  "category": 99999
+}
+
+### Test avec category nom inexistant (devrait retourner 404)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "name": "Apples",
+  "category": "CategoryInexistante"
+}
+
+### Test sans token (devrait retourner 401)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+
+{
+  "name": "Apples",
+  "category": 1
+}
+
+### Test avec token invalide (devrait retourner 401)
+POST {{baseUrl}}/api/items/add
+Content-Type: {{contentType}}
+Authorization: Bearer invalid_token_here
+
+{
+  "name": "Apples",
+  "category": 1
+}
+
