@@ -2,12 +2,16 @@
 
 namespace App\Controller\ApiController;
 
+use App\DTO\Api\Inventory\AddInventoryDto;
+use App\DTO\Api\Inventory\RemoveInventoryDto;
 use App\Entity\Client;
 use App\Entity\Inventory;
 use App\Entity\Item;
 use App\Repository\ClientItemRepository;
 use App\Repository\InventoryRepository;
 use App\Repository\ItemRepository;
+use App\Service\Validator\RequestValidator;
+use App\Trait\ApiResponseTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,11 +20,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#TODO: Factorise le code avec un service de validation de body
-
 #[Route('/inventories')]
 class InventoryController extends AbstractController
 {
+    use ApiResponseTrait;
     #[Route('', name: 'api_inventories_list', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function list(
@@ -133,9 +136,9 @@ class InventoryController extends AbstractController
         Request $request,
         ItemRepository $itemRepository,
         InventoryRepository $inventoryRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        RequestValidator $requestValidator
     ): JsonResponse {
-        // Récupérer l'utilisateur connecté (qui doit être un Client)
         $user = $this->getUser();
         
         if (!$user instanceof Client) {
@@ -145,26 +148,14 @@ class InventoryController extends AbstractController
             );
         }
 
-        $data = json_decode($request->getContent(), true);
-
-        // Validation des données requises
-        if (!isset($data['itemId']) || !isset($data['quantity'])) {
-            return new JsonResponse(
-                ['error' => 'itemId and quantity are required'],
-                Response::HTTP_BAD_REQUEST
-            );
+        try {
+            $dto = $requestValidator->validate($request->getContent(), AddInventoryDto::class);
+        } catch (\Exception $e) {
+            return $this->jsonException($e);
         }
 
-        $itemId = (int) $data['itemId'];
-        $quantity = (int) $data['quantity'];
-
-        // Vérifier que la quantité est positive
-        if ($quantity <= 0) {
-            return new JsonResponse(
-                ['error' => 'Quantity must be greater than 0'],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
+        $itemId = $dto->getItemId();
+        $quantity = $dto->getQuantity();
 
         // Vérifier que l'item existe
         $item = $itemRepository->find($itemId);
@@ -226,9 +217,9 @@ class InventoryController extends AbstractController
         Request $request,
         ItemRepository $itemRepository,
         InventoryRepository $inventoryRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        RequestValidator $requestValidator
     ): JsonResponse {
-        // Récupérer l'utilisateur connecté (qui doit être un Client)
         $user = $this->getUser();
         
         if (!$user instanceof Client) {
@@ -238,26 +229,14 @@ class InventoryController extends AbstractController
             );
         }
 
-        $data = json_decode($request->getContent(), true);
-
-        // Validation des données requises
-        if (!isset($data['itemId']) || !isset($data['quantity'])) {
-            return new JsonResponse(
-                ['error' => 'itemId and quantity are required'],
-                Response::HTTP_BAD_REQUEST
-            );
+        try {
+            $dto = $requestValidator->validate($request->getContent(), RemoveInventoryDto::class);
+        } catch (\Exception $e) {
+            return $this->jsonException($e);
         }
 
-        $itemId = (int) $data['itemId'];
-        $quantity = (int) $data['quantity'];
-
-        // Vérifier que la quantité est positive
-        if ($quantity <= 0) {
-            return new JsonResponse(
-                ['error' => 'Quantity must be greater than 0'],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
+        $itemId = $dto->getItemId();
+        $quantity = $dto->getQuantity();
 
         // Vérifier que l'item existe
         $item = $itemRepository->find($itemId);

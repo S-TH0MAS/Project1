@@ -2,9 +2,12 @@
 
 namespace App\Controller\ApiController;
 
+use App\DTO\Api\Recipe\GenerateRecipeDto;
 use App\Entity\Client;
 use App\Repository\InventoryRepository;
 use App\Service\Gemini\RequestFormat\RecipeRequestFormat;
+use App\Service\Validator\RequestValidator;
+use App\Trait\ApiResponseTrait;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,14 +19,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/generate_recipes')]
 class RecipeController extends AbstractController
 {
+    use ApiResponseTrait;
+
     #[Route('', name: 'api_generate_recipes', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function generateRecipes(
         Request $request,
         InventoryRepository $inventoryRepository,
-        RecipeRequestFormat $recipeRequestFormat
+        RecipeRequestFormat $recipeRequestFormat,
+        RequestValidator $requestValidator
     ): JsonResponse {
-        // Récupérer l'utilisateur connecté (qui doit être un Client)
         $user = $this->getUser();
         
         if (!$user instanceof Client) {
@@ -33,17 +38,13 @@ class RecipeController extends AbstractController
             );
         }
 
-        // Récupérer le prompt de l'utilisateur depuis le body
-        $data = json_decode($request->getContent(), true);
-        $userRequest = $data['prompt'] ?? '';
-
-        // Validation du prompt
-        if (empty($userRequest)) {
-            return new JsonResponse(
-                ['error' => 'Prompt is required'],
-                Response::HTTP_BAD_REQUEST
-            );
+        try {
+            $dto = $requestValidator->validate($request->getContent(), GenerateRecipeDto::class);
+        } catch (\Exception $e) {
+            return $this->jsonException($e);
         }
+
+        $userRequest = $dto->getPrompt();
 
         // Récupérer tous les items du client avec leurs quantités
         $clientInventories = $inventoryRepository->findBy(['client' => $user]);

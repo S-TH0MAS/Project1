@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\DTO\User\CreateUserDto;
 use App\Entity\Client;
 use App\Entity\User;
+use App\Service\Validator\RequestValidator;
+use App\Trait\ApiResponseTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,6 +19,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/user')]
 class UserController extends AbstractController
 {
+    use ApiResponseTrait;
     #[Route('/login', name: 'api_login', methods: ['POST'])]
     public function login(): void
     {
@@ -30,21 +34,18 @@ class UserController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        RequestValidator $requestValidator
     ): JsonResponse {
-        $data = json_decode($request->getContent(), true);
-
-        // Validation des données requises
-        if (!isset($data['email']) || !isset($data['password']) || !isset($data['name'])) {
-            return new JsonResponse(
-                ['error' => 'Email, password and name are required'],
-                Response::HTTP_BAD_REQUEST
-            );
+        try {
+            $dto = $requestValidator->validate($request->getContent(), CreateUserDto::class);
+        } catch (\Exception $e) {
+            return $this->jsonException($e);
         }
 
         // Vérifier si un utilisateur (ou client) existe déjà avec cet email
         $existingUser = $entityManager->getRepository(User::class)
-            ->findOneBy(['email' => $data['email']]);
+            ->findOneBy(['email' => $dto->getEmail()]);
 
         if ($existingUser) {
             return new JsonResponse(
@@ -55,11 +56,11 @@ class UserController extends AbstractController
 
         // Créer un nouveau client
         $client = new Client();
-        $client->setEmail($data['email']);
-        $client->setName($data['name']);
+        $client->setEmail($dto->getEmail());
+        $client->setName($dto->getName());
         
         // Hasher le mot de passe
-        $hashedPassword = $passwordHasher->hashPassword($client, $data['password']);
+        $hashedPassword = $passwordHasher->hashPassword($client, $dto->getPassword());
         $client->setPassword($hashedPassword);
 
         // Valider l'entité
