@@ -12,9 +12,10 @@ GET /api/inventories
 
 ### Description
 Cette route permet d'obtenir la liste complète des items disponibles pour un client, ainsi que son inventaire personnel. Elle retourne :
-- Tous les items par défaut (qui n'appartiennent à aucun client)
-- Tous les items du client connecté (via la table Inventory)
+- Tous les items par défaut (Item non client, qui n'appartiennent à aucun client)
+- Tous les items du client connecté (ClientItem, items personnalisés créés par le client)
 - Les quantités de chaque item dans l'inventaire du client
+- La liste des IDs des items appartenant au client (ClientItem)
 
 ### Paramètres
 
@@ -77,7 +78,8 @@ Content-Type: application/json
       "item_id": 3,
       "quantity": 10
     }
-  ]
+  ],
+  "client_items": [3]
 }
 ```
 
@@ -95,6 +97,9 @@ Content-Type: application/json
   - `item_id` : Identifiant de l'item (integer) - correspond à un `id` dans le tableau `items`
   - `quantity` : Quantité de l'item dans l'inventaire du client (integer)
 
+- `client_items` : Tableau contenant les IDs des items appartenant au client (ClientItem)
+  - Liste d'entiers (integer[]) représentant les identifiants des items personnalisés créés par le client
+
 #### Cas particuliers
 
 **Inventaire vide** : Si le client n'a aucun item dans son inventaire, `inventory` sera un tableau vide mais `items` contiendra toujours les items par défaut :
@@ -111,7 +116,8 @@ Content-Type: application/json
       "img": "pomme.jpg"
     }
   ],
-  "inventory": []
+  "inventory": [],
+  "client_items": []
 }
 ```
 
@@ -119,7 +125,27 @@ Content-Type: application/json
 ```json
 {
   "items": [],
-  "inventory": []
+  "inventory": [],
+  "client_items": []
+}
+```
+
+**Client avec items personnalisés mais sans inventaire** : Si le client a créé des items personnalisés mais n'a pas encore d'inventaire :
+```json
+{
+  "items": [
+    {
+      "id": 10,
+      "name": "Mon item personnalisé",
+      "category": {
+        "id": 1,
+        "name": "Fruits"
+      },
+      "img": "mon-item.jpg"
+    }
+  ],
+  "inventory": [],
+  "client_items": [10]
 }
 ```
 
@@ -182,17 +208,22 @@ Content-Type: application/json
 
 ### Logique métier
 
-1. **Items par défaut** : La route récupère tous les items où `discr = 'item'` (items de base qui n'appartiennent à aucun client)
-2. **Items du client** : La route récupère tous les items du client connecté via la table `Inventory` qui contient la relation entre un `Client` et un `Item` avec une quantité
-3. **Combinaison** : Les deux listes sont combinées sans doublons dans le tableau `items`
-4. **Inventory** : Le tableau `inventory` contient uniquement les items qui appartiennent au client avec leur quantité respective
+La route suit les étapes suivantes :
+
+1. **Récupération des items par défaut** : Récupère tous les items où `discr = 'item'` (Item non client, items de base qui n'appartiennent à aucun client)
+2. **Récupération des items du client** : Récupère tous les items du client connecté via `ClientItemRepository` (ClientItem, items personnalisés créés par le client)
+3. **Récupération de l'inventaire** : Récupère l'inventaire du client via `InventoryRepository` (table Inventory qui contient la relation entre un `Client` et un `Item` avec une quantité)
+4. **Concaténation des items** : Concatène les deux listes d'items (items par défaut + ClientItems) pour avoir tous les items disponibles, en évitant les doublons
+5. **Préparation de l'inventory** : Prépare l'array de retour pour l'inventory avec les quantités
+6. **Liste des client_items** : Construit la liste des IDs des items appartenant au client (ClientItem) dans le champ `client_items`
 
 
 ### Relations entre les données
 
-- **Items par défaut** : Ces items sont stockés dans la table `item` avec `discr = 'item'`. Ils sont disponibles pour tous les clients mais n'appartiennent à personne
-- **Items du client** : Ces items sont liés au client via la table `Inventory` qui fait le lien entre un `Client` et un `Item` avec une quantité
-- **Catégories** : Chaque item appartient à une catégorie (relation ManyToOne avec `Category`)
+- **Items par défaut (Item)** : Ces items sont stockés dans la table `item` avec `discr = 'item'`. Ils sont disponibles pour tous les clients mais n'appartiennent à personne
+- **Items du client (ClientItem)** : Ces items sont stockés dans la table `item` avec `discr = 'client_item'` et sont liés au client via une relation `ManyToOne`. Ce sont des items personnalisés créés par le client via `POST /api/items/add`
+- **Inventory** : La table `Inventory` fait le lien entre un `Client` et un `Item` (peut être un Item par défaut ou un ClientItem) avec une quantité. Elle permet de gérer le stock du client
+- **Catégories** : Chaque item (Item ou ClientItem) appartient à une catégorie (relation ManyToOne avec `Category`)
 
 ---
 
@@ -448,6 +479,8 @@ Si l'inventory n'existe pas, la route retourne un succès sans erreur :
 - **Performance** : La route retourne tous les items en une seule requête. Pour de grandes quantités de données, une pagination pourrait être ajoutée dans le futur
 - **Relations** : 
   - Les items sont liés aux catégories via une relation ManyToOne
-  - Les items du client sont liés via la table `Inventory` qui contient la quantité
-  - Les items par défaut n'ont pas de relation avec un client spécifique
+  - Les ClientItems sont directement liés au client via une relation ManyToOne
+  - Les items du client dans l'inventaire sont liés via la table `Inventory` qui contient la quantité (peut référencer un Item par défaut ou un ClientItem)
+  - Les items par défaut n'ont pas de relation directe avec un client spécifique
+- **client_items** : Le champ `client_items` permet d'identifier rapidement quels items dans la liste `items` appartiennent au client (sont des ClientItem). Cela facilite l'affichage côté client pour distinguer les items personnalisés des items par défaut
 

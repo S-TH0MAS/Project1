@@ -5,6 +5,7 @@ namespace App\Controller\ApiController;
 use App\Entity\Client;
 use App\Entity\Inventory;
 use App\Entity\Item;
+use App\Repository\ClientItemRepository;
 use App\Repository\InventoryRepository;
 use App\Repository\ItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +25,7 @@ class InventoryController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function list(
         ItemRepository $itemRepository,
+        ClientItemRepository $clientItemRepository,
         InventoryRepository $inventoryRepository
     ): JsonResponse {
         // Récupérer l'utilisateur connecté (qui doit être un Client)
@@ -36,22 +38,23 @@ class InventoryController extends AbstractController
             );
         }
 
-        // Récupérer tous les items par défaut (discr = 'item', pas de client)
+        // --- Étape 1 : Récupérer tous les items (Item non client)
         $defaultItems = $itemRepository->createQueryBuilder('i')
             ->where('i INSTANCE OF App\Entity\Item')
             ->getQuery()
             ->getResult();
 
-        // Récupérer tous les items du client (via ClientItem ou Inventory)
-        // On récupère les items via Inventory qui contient la quantité
+        // --- Étape 2 : Récupérer tous les items du client (ClientItem)
+        $clientItems = $clientItemRepository->findBy(['client' => $user]);
+
+        // --- Étape 3 : Récupérer l'inventaire du client
         $clientInventories = $inventoryRepository->findBy(['client' => $user]);
 
-        // Construire la liste de tous les items (default + client)
+        // --- Étape 4 : Concaténer les deux listes d'items pour avoir tous les items
         $allItems = [];
-        $inventoryData = [];
         $itemIds = []; // Pour éviter les doublons
 
-        // Ajouter les items par défaut
+        // Ajouter les items par défaut (Item non client)
         foreach ($defaultItems as $item) {
             $itemId = $item->getId();
             $allItems[] = [
@@ -66,12 +69,34 @@ class InventoryController extends AbstractController
             $itemIds[$itemId] = true;
         }
 
-        // Ajouter les items du client et construire l'inventory
+        // Ajouter les items du client (ClientItem)
+        $clientItemIds = [];
+        foreach ($clientItems as $clientItem) {
+            $itemId = $clientItem->getId();
+            $clientItemIds[] = $itemId;
+            
+            // Ajouter l'item à la liste si pas déjà présent
+            if (!isset($itemIds[$itemId])) {
+                $allItems[] = [
+                    'id' => $itemId,
+                    'name' => $clientItem->getName(),
+                    'category' => [
+                        'id' => $clientItem->getCategory()->getId(),
+                        'name' => $clientItem->getCategory()->getName(),
+                    ],
+                    'img' => $clientItem->getImg(),
+                ];
+                $itemIds[$itemId] = true;
+            }
+        }
+
+        // --- Étape 5 : Préparer l'array de retour pour l'inventory
+        $inventoryData = [];
         foreach ($clientInventories as $inventory) {
             $item = $inventory->getItem();
             $itemId = $item->getId();
             
-            // Ajouter l'item à la liste si pas déjà présent
+            // S'assurer que l'item est dans la liste si pas déjà présent
             if (!isset($itemIds[$itemId])) {
                 $allItems[] = [
                     'id' => $itemId,
@@ -96,6 +121,7 @@ class InventoryController extends AbstractController
             [
                 'items' => $allItems,
                 'inventory' => $inventoryData,
+                'client_items' => $clientItemIds,
             ],
             Response::HTTP_OK
         );
