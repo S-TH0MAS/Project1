@@ -3,7 +3,7 @@
 # Script pour servir le dossier .source/maquette/html avec Node.js (http-server)
 
 PORT=${1:-8000}
-DIRECTORY="./html"
+DIRECTORY="./V2/html"
 
 # Vérifier si le dossier existe
 if [ ! -d "$DIRECTORY" ]; then

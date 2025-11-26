@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mon Profil Admin - Gestion</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+      .bottom-sheet {
+        transition: transform 0.3s ease-in-out;
+      }
+      .bottom-sheet-backdrop {
+        transition: opacity 0.3s ease-in-out;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#10b981", // emerald-500 for a slightly brighter sage green
+              "background-light": "#f8fafc", // slate-50
+              "background-dark": "#0f172a", // slate-900
+              "surface-light": "#ffffff",
+              "surface-dark": "#1e293b", // slate-800
+              "text-light": "#1e293b", // slate-800
+              "text-dark": "#e2e8f0", // slate-200
+              "text-secondary-light": "#64748b", // slate-500
+              "text-secondary-dark": "#94a3b8", // slate-400
+              destructive: "#ef4444", // red-500
+            },
+            fontFamily: {
+              display: ["Work Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.75rem", // rounded-lg
+              lg: "1rem", // rounded-xl
+              xl: "1.5rem", // rounded-2xl
+              "2xl": "2rem", // rounded-3xl
+              full: "9999px",
+            },
+            boxShadow: {
+              soft: "0 4px 12px 0 rgba(0, 0, 0, 0.05)",
+              "soft-dark": "0 4px 12px 0 rgba(0, 0, 0, 0.15)",
+              fab: "0 8px 20px 0 rgba(16, 185, 129, 0.3)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body class="bg-black font-display">
+    <div
+      class="relative mx-auto flex h-auto min-h-screen w-full max-w-md flex-col overflow-x-hidden group/design-root bg-background-light dark:bg-background-dark"
+    >
+      <!-- Sticky Header -->
+      <header
+        class="sticky top-0 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm"
+      >
+        <div class="flex flex-col gap-3 p-4 pb-3">
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col">
+              <p
+                class="text-text-light dark:text-text-dark tracking-light text-[28px] font-bold leading-tight"
+              >
+                Mon Profil Admin
+              </p>
+              <p
+                class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium mt-1"
+              >
+                Bonjour,
+                <span id="admin-user-name" class="text-primary font-semibold"
+                  >John Doe</span
+                >
+              </p>
+            </div>
+            <button
+              id="logout-button"
+              class="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-destructive/10 hover:bg-destructive/20 text-destructive transition-colors"
+              title="Déconnexion"
+            >
+              <span class="material-symbols-outlined text-lg">logout</span>
+              <span class="text-sm font-medium hidden sm:inline"
+                >Déconnexion</span
+              >
+            </button>
+          </div>
+        </div>
+      </header>
+      <!-- Main Content: Gestion Cards -->
+      <main class="flex-1 px-4 py-6 space-y-4 pb-28">
+        <!-- Section Title -->
+        <div class="mb-2">
+          <p
+            class="text-text-light dark:text-text-dark text-lg font-semibold leading-normal"
+          >
+            Gestion
+          </p>
+          <p
+            class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal mt-1"
+          >
+            Gérez les ressources de l'application
+          </p>
+        </div>
+
+        <!-- Ingrédients Card -->
+        <a
+          href="admin-ingredients.html"
+          class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-6 min-h-[100px] rounded-xl shadow-soft dark:shadow-none hover:shadow-lg transition-shadow cursor-pointer"
+        >
+          <div
+            class="text-4xl flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-16"
+          >
+            <span class="material-symbols-outlined text-primary text-4xl"
+              >restaurant</span
+            >
+          </div>
+          <div class="flex flex-col justify-center flex-1">
+            <p
+              class="text-text-light dark:text-text-dark text-lg font-semibold leading-normal"
+            >
+              Gestion des Ingrédients
+            </p>
+            <p
+              class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal mt-1"
+            >
+              Créer, modifier et supprimer des ingrédients
+            </p>
+          </div>
+          <div class="shrink-0">
+            <span
+              class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark"
+              >chevron_right</span
+            >
+          </div>
+        </a>
+
+        <!-- Catégories Card -->
+        <a
+          href="admin-categories.html"
+          class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-6 min-h-[100px] rounded-xl shadow-soft dark:shadow-none hover:shadow-lg transition-shadow cursor-pointer"
+        >
+          <div
+            class="text-4xl flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-16"
+          >
+            <span class="material-symbols-outlined text-primary text-4xl"
+              >category</span
+            >
+          </div>
+          <div class="flex flex-col justify-center flex-1">
+            <p
+              class="text-text-light dark:text-text-dark text-lg font-semibold leading-normal"
+            >
+              Gestion des Catégories
+            </p>
+            <p
+              class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal mt-1"
+            >
+              Créer, modifier et supprimer des catégories
+            </p>
+          </div>
+          <div class="shrink-0">
+            <span
+              class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark"
+              >chevron_right</span
+            >
+          </div>
+        </a>
+
+        <!-- Utilisateurs Card -->
+        <a
+          href="admin-users.html"
+          class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-6 min-h-[100px] rounded-xl shadow-soft dark:shadow-none hover:shadow-lg transition-shadow cursor-pointer"
+        >
+          <div
+            class="text-4xl flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-16"
+          >
+            <span class="material-symbols-outlined text-primary text-4xl"
+              >people</span
+            >
+          </div>
+          <div class="flex flex-col justify-center flex-1">
+            <p
+              class="text-text-light dark:text-text-dark text-lg font-semibold leading-normal"
+            >
+              Gestion des Utilisateurs
+            </p>
+            <p
+              class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal mt-1"
+            >
+              Créer, modifier et supprimer des utilisateurs
+            </p>
+          </div>
+          <div class="shrink-0">
+            <span
+              class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark"
+              >chevron_right</span
+            >
+          </div>
+        </a>
+      </main>
+
+      <!-- Bottom Navigation -->
+      <nav
+        class="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md border-t border-slate-200/50 dark:border-slate-700/50 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-sm"
+      >
+        <div class="flex h-20 items-center justify-around px-4">
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="3-inventory.html"
+          >
+            <span class="material-symbols-outlined">inventory_2</span>
+            <span class="text-xs font-medium">Inventaire</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="5-recipe_prompt.html"
+          >
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-xs font-medium">Recette</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-primary"
+            href="monprofil-admin.html"
+          >
+            <span
+              class="material-symbols-outlined"
+              style="font-variation-settings: 'FILL' 1"
+              >account_circle</span
+            >
+            <span class="text-xs font-medium">Profil</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+    <script>
+      // Load user name (replace with actual API call)
+      document.addEventListener("DOMContentLoaded", () => {
+        // Replace with actual API call
+        // fetch('/api/user')
+        //   .then(res => res.json())
+        //   .then(data => {
+        //     document.getElementById("admin-user-name").textContent = data.name || data.email;
+        //   });
+
+        // Demo data
+        document.getElementById("admin-user-name").textContent = "John Doe";
+      });
+
+      // Logout button handler
+      document.getElementById("logout-button").addEventListener("click", () => {
+        if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
+          // Replace with actual logout logic
+          // window.location.href = "/logout";
+          console.log("Déconnexion...");
+        }
+      });
+    </script>
+  </body>
+</html>

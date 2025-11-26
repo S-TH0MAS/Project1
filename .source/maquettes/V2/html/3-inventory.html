@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Super Dashboard - Food Inventory Manager</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+      .bottom-sheet {
+        transition: transform 0.3s ease-in-out;
+      }
+      .bottom-sheet-backdrop {
+        transition: opacity 0.3s ease-in-out;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#10b981", // emerald-500 for a slightly brighter sage green
+              "background-light": "#f8fafc", // slate-50
+              "background-dark": "#0f172a", // slate-900
+              "surface-light": "#ffffff",
+              "surface-dark": "#1e293b", // slate-800
+              "text-light": "#1e293b", // slate-800
+              "text-dark": "#e2e8f0", // slate-200
+              "text-secondary-light": "#64748b", // slate-500
+              "text-secondary-dark": "#94a3b8", // slate-400
+              destructive: "#ef4444", // red-500
+            },
+            fontFamily: {
+              display: ["Work Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.75rem", // rounded-lg
+              lg: "1rem", // rounded-xl
+              xl: "1.5rem", // rounded-2xl
+              "2xl": "2rem", // rounded-3xl
+              full: "9999px",
+            },
+            boxShadow: {
+              soft: "0 4px 12px 0 rgba(0, 0, 0, 0.05)",
+              "soft-dark": "0 4px 12px 0 rgba(0, 0, 0, 0.15)",
+              fab: "0 8px 20px 0 rgba(16, 185, 129, 0.3)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body class="bg-black font-display">
+    <div
+      class="relative mx-auto flex h-auto min-h-screen w-full max-w-md flex-col overflow-x-hidden group/design-root bg-background-light dark:bg-background-dark"
+    >
+      <!-- Sticky Header -->
+      <header
+        class="sticky top-0 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm"
+      >
+        <div class="flex flex-col gap-3 p-4 pb-3">
+          <p
+            class="text-text-light dark:text-text-dark tracking-light text-[28px] font-bold leading-tight"
+          >
+            My Inventory
+          </p>
+          <!-- SearchBar -->
+          <label class="flex flex-col min-w-40 h-14 w-full">
+            <div
+              class="flex w-full flex-1 items-stretch rounded-xl h-full shadow-soft dark:shadow-none"
+            >
+              <div
+                class="text-text-secondary-light dark:text-text-secondary-dark flex bg-surface-light dark:bg-surface-dark items-center justify-center pl-4 rounded-l-xl border-r-0"
+              >
+                <span class="material-symbols-outlined">search</span>
+              </div>
+              <input
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-surface-light dark:bg-surface-dark h-full placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark px-4 pl-2 text-base font-normal leading-normal"
+                placeholder="Search for bananas, milk, ..."
+                value=""
+              />
+            </div>
+          </label>
+        </div>
+        <!-- Chips -->
+        <div class="flex gap-3 px-4 pb-4 overflow-x-auto">
+          <div
+            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-primary pl-4 pr-4 cursor-pointer"
+          >
+            <p class="text-white text-sm font-medium leading-normal">Tout</p>
+          </div>
+          <div
+            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-surface-light dark:bg-surface-dark pl-4 pr-4 cursor-pointer shadow-soft dark:shadow-none"
+          >
+            <p
+              class="text-text-light dark:text-text-dark text-sm font-medium leading-normal"
+            >
+              Frais
+            </p>
+          </div>
+          <div
+            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-surface-light dark:bg-surface-dark pl-4 pr-4 cursor-pointer shadow-soft dark:shadow-none"
+          >
+            <p
+              class="text-text-light dark:text-text-dark text-sm font-medium leading-normal"
+            >
+              Congelé
+            </p>
+          </div>
+          <div
+            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-surface-light dark:bg-surface-dark pl-4 pr-4 cursor-pointer shadow-soft dark:shadow-none"
+          >
+            <p
+              class="text-text-light dark:text-text-dark text-sm font-medium leading-normal"
+            >
+              Épicerie
+            </p>
+          </div>
+        </div>
+      </header>
+      <!-- Main Content: Item List -->
+      <main class="flex-1 px-4 py-2 space-y-3 pb-28">
+        <!-- Item Card 1 -->
+        <div
+          class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-4 min-h-[72px] justify-between rounded-xl shadow-soft dark:shadow-none"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="text-4xl flex items-center justify-center rounded-lg bg-background-light dark:bg-background-dark shrink-0 size-14"
+            >
+              <span>🍎</span>
+            </div>
+            <div class="flex flex-col justify-center">
+              <p
+                class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-1"
+              >
+                Apples
+              </p>
+              <p
+                class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal mt-1"
+              >
+                Frais
+              </p>
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            <button
+              class="flex items-center justify-center size-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            >
+              <span class="material-symbols-outlined text-lg">remove</span>
+            </button>
+            <span
+              class="text-text-light dark:text-text-dark text-base font-semibold min-w-[2rem] text-center"
+              >5</span
+            >
+            <button
+              class="flex items-center justify-center size-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            >
+              <span class="material-symbols-outlined text-lg">add</span>
+            </button>
+          </div>
+        </div>
+        <!-- Item Card 2 -->
+        <div
+          class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-4 min-h-[72px] justify-between rounded-xl shadow-soft dark:shadow-none"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="text-4xl flex items-center justify-center rounded-lg bg-background-light dark:bg-background-dark shrink-0 size-14"
+            >
+              <span>🥛</span>
+            </div>
+            <div class="flex flex-col justify-center">
+              <p
+                class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-1"
+              >
+                Milk
+              </p>
+              <p
+                class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal mt-1"
+              >
+                Frais
+              </p>
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            <button
+              class="flex items-center justify-center size-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            >
+              <span class="material-symbols-outlined text-lg">remove</span>
+            </button>
+            <span
+              class="text-text-light dark:text-text-dark text-base font-semibold min-w-[2rem] text-center"
+              >1</span
+            >
+            <button
+              class="flex items-center justify-center size-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            >
+              <span class="material-symbols-outlined text-lg">add</span>
+            </button>
+          </div>
+        </div>
+        <!-- Item Card 3 -->
+        <div
+          class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-4 min-h-[72px] justify-between rounded-xl shadow-soft dark:shadow-none"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="text-4xl flex items-center justify-center rounded-lg bg-background-light dark:bg-background-dark shrink-0 size-14"
+            >
+              <span>🍗</span>
+            </div>
+            <div class="flex flex-col justify-center">
+              <p
+                class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-1"
+              >
+                Chicken Breast
+              </p>
+              <p
+                class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal mt-1"
+              >
+                Congelé
+              </p>
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            <button
+              class="flex items-center justify-center size-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            >
+              <span class="material-symbols-outlined text-lg">remove</span>
+            </button>
+            <span
+              class="text-text-light dark:text-text-dark text-base font-semibold min-w-[2rem] text-center"
+              >2</span
+            >
+            <button
+              class="flex items-center justify-center size-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            >
+              <span class="material-symbols-outlined text-lg">add</span>
+            </button>
+          </div>
+        </div>
+        <!-- Item Card 4 -->
+        <div
+          class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark p-4 min-h-[72px] justify-between rounded-xl shadow-soft dark:shadow-none"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="text-4xl flex items-center justify-center rounded-lg bg-background-light dark:bg-background-dark shrink-0 size-14"
+            >
+              <span>🍞</span>
+            </div>
+            <div class="flex flex-col justify-center">
+              <p
+                class="text-text-light dark:text-text-dark text-base font-medium leading-normal line-clamp-1"
+              >
+                Bread
+              </p>
+              <p
+                class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal mt-1"
+              >
+                Épicerie
+              </p>
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            <button
+              class="flex items-center justify-center size-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            >
+              <span class="material-symbols-outlined text-lg">remove</span>
+            </button>
+            <span
+              class="text-text-light dark:text-text-dark text-base font-semibold min-w-[2rem] text-center"
+              >1</span
+            >
+            <button
+              class="flex items-center justify-center size-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            >
+              <span class="material-symbols-outlined text-lg">add</span>
+            </button>
+          </div>
+        </div>
+        <!-- Empty State Example -->
+        <!-- 
+      <div class="flex flex-col items-center justify-center text-center py-16 px-4">
+        <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4">inventory_2</span>
+        <p class="text-lg font-bold text-text-light dark:text-text-dark">Your inventory is empty</p>
+        <p class="text-text-secondary-light dark:text-text-secondary-dark mt-1">Tap the '+' button to add your first item!</p>
+      </div>
+      --></main>
+      <!-- Floating Action Button -->
+      <a
+        href="4-add_item.html"
+        class="absolute bottom-24 right-4 z-40 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-white shadow-fab cursor-pointer"
+      >
+        <span
+          class="material-symbols-outlined text-4xl"
+          style="font-variation-settings: 'wght' 500"
+          >add</span
+        >
+      </a>
+      <!-- Bottom Navigation -->
+      <nav
+        class="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md border-t border-slate-200/50 dark:border-slate-700/50 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-sm"
+      >
+        <div class="flex h-20 items-center justify-around px-4">
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-primary"
+            href="3-inventory.html"
+          >
+            <span
+              class="material-symbols-outlined"
+              style="font-variation-settings: 'FILL' 1"
+              >inventory_2</span
+            >
+            <span class="text-xs font-medium">Inventaire</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="5-recipe_prompt.html"
+          >
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-xs font-medium">Recette</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="monprofil.html"
+          >
+            <span
+              class="material-symbols-outlined"
+              style="font-variation-settings: 'FILL' 1"
+              >account_circle</span
+            >
+            <span class="text-xs font-medium">Profil</span>
+          </a>
+        </div>
+      </nav>
+      <!-- Interactive Bottom Sheet (Hidden by default) -->
+      <div class="fixed inset-0 z-50 flex items-end pointer-events-none">
+        <!-- Backdrop -->
+        <div
+          class="absolute inset-0 bg-black/40 bottom-sheet-backdrop opacity-0"
+        ></div>
+        <!-- Sheet Content -->
+        <div
+          class="relative w-full bg-background-light dark:bg-background-dark rounded-t-2xl p-4 transform translate-y-full bottom-sheet pointer-events-auto"
+        >
+          <div
+            class="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-slate-600 mb-4"
+          ></div>
+          <h2
+            class="text-xl font-bold text-text-light dark:text-text-dark mb-6 text-center"
+          >
+            Edit Item: 🍎 Apples
+          </h2>
+          <div class="space-y-6">
+            <!-- Item Name -->
+            <div>
+              <label
+                class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1"
+                for="item-name"
+                >Item Name</label
+              >
+              <input
+                class="form-input w-full rounded-xl border-slate-300 dark:border-slate-600 bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark focus:border-primary focus:ring-primary"
+                id="item-name"
+                type="text"
+                value="Apples"
+              />
+            </div>
+            <!-- Quantity Stepper -->
+            <div>
+              <label
+                class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1"
+                >Quantity</label
+              >
+              <div class="flex items-center justify-center gap-4">
+                <button
+                  class="flex items-center justify-center size-12 rounded-full bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark"
+                >
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+                <span
+                  class="text-2xl font-bold text-text-light dark:text-text-dark w-16 text-center"
+                  >5</span
+                >
+                <button
+                  class="flex items-center justify-center size-12 rounded-full bg-slate-200 dark:bg-slate-700 text-text-light dark:text-text-dark"
+                >
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+              </div>
+            </div>
+            <!-- Expiration Date -->
+            <div>
+              <label
+                class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1"
+                for="exp-date"
+                >Expiration Date</label
+              >
+              <input
+                class="form-input w-full rounded-xl border-slate-300 dark:border-slate-600 bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark focus:border-primary focus:ring-primary"
+                id="exp-date"
+                type="date"
+                value="2024-08-15"
+              />
+            </div>
+          </div>
+          <!-- Action Buttons -->
+          <div class="mt-8 grid grid-cols-2 gap-4">
+            <button
+              class="py-3 px-4 rounded-xl text-center font-bold bg-destructive/10 text-destructive"
+            >
+              Delete
+            </button>
+            <button
+              class="py-3 px-4 rounded-xl text-center font-bold bg-primary text-white"
+            >
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
