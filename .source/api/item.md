@@ -11,30 +11,47 @@ POST /api/items/add
 `POST`
 
 ### Description
-Cette route permet à un client de créer un nouvel item personnalisé qui lui appartient. L'item créé est un `ClientItem` qui hérite de `Item` et est automatiquement lié au client connecté. Contrairement aux items par défaut, cet item est unique au client et n'est pas partagé avec les autres utilisateurs.
+Cette route permet à un client de créer un nouvel item personnalisé qui lui appartient, avec optionnellement une image. L'item créé est un `ClientItem` qui hérite de `Item` et est automatiquement lié au client connecté. Contrairement aux items par défaut, cet item est unique au client et n'est pas partagé avec les autres utilisateurs.
+
+**Note importante** : Cette route utilise le format `multipart/form-data` (et non `application/json` pur) pour permettre l'envoi simultané de données structurées et d'un fichier binaire.
 
 ### Paramètres
 
-#### Body (JSON)
+#### Body (multipart/form-data)
+La requête attend deux champs distincts dans le corps du formulaire.
+
+| Champ | Type | Requis | Description |
+|-------|------|--------|-------------|
+| `data` | string (JSON) | Oui | Une chaîne de caractères contenant l'objet JSON avec `name` et `category` |
+| `image` | File | Non | Fichier image. Formats : JPG, PNG, GIF, WEBP. Max : 2 Mo |
+
+#### Structure du champ data (JSON décodé)
 | Paramètre | Type | Requis | Description |
 |-----------|------|--------|-------------|
 | `name` | string | Oui | Nom de l'item (ne peut pas être vide ou contenir uniquement des espaces) |
 | `category` | integer ou string | Oui | Catégorie de l'item. Peut être l'ID de la catégorie (integer) ou le nom de la catégorie (string) |
 
-#### Exemple de requête avec category par ID
-```json
+#### Exemple de structure de requête (Multipart)
+```http
+POST /api/items/add HTTP/1.1
+Host: localhost:8000
+Authorization: Bearer <token>
+Content-Type: multipart/form-data; boundary=BoundaryString
+
+--BoundaryString
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
 {
   "name": "Apples",
   "category": 1
 }
-```
+--BoundaryString
+Content-Disposition: form-data; name="image"; filename="photo.jpg"
+Content-Type: image/jpeg
 
-#### Exemple de requête avec category par nom
-```json
-{
-  "name": "Bananes",
-  "category": "Fruits"
-}
+[Données binaires du fichier...]
+--BoundaryString--
 ```
 
 ### Headers requis
@@ -42,19 +59,7 @@ Cette route permet à un client de créer un nouvel item personnalisé qui lui a
 | Header | Type | Requis | Description |
 |--------|------|--------|-------------|
 | `Authorization` | string | Oui | Token JWT obtenu via `POST /user/login` au format `Bearer <token>` |
-| `Content-Type` | string | Oui | Doit être `application/json` |
-
-#### Exemple de requête complète
-```http
-POST /api/items/add
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2MzU4NzY1NDAsImV4cCI6MTYzNTg4MDE0MCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiY2xpZW50QGV4YW1wbGUuY29tIn0...
-Content-Type: application/json
-
-{
-  "name": "Apples",
-  "category": 1
-}
-```
+| `Content-Type` | string | Oui | Doit être `multipart/form-data; boundary=...` (Géré automatiquement par les clients HTTP/Navigateurs) |
 
 ### Retour
 
@@ -65,11 +70,8 @@ Content-Type: application/json
   "item": {
     "id": 1,
     "name": "Apples",
-    "category": {
-      "id": 1,
-      "name": "Fruits"
-    },
-    "img": null
+    "category": "Fruits",
+    "img": "apples-647df8a.jpg"
   }
 }
 ```
@@ -80,14 +82,26 @@ Content-Type: application/json
 - `item` : Objet contenant les informations de l'item créé
   - `id` : Identifiant unique de l'item créé (integer)
   - `name` : Nom de l'item (string)
-  - `category` : Objet contenant les informations de la catégorie
-    - `id` : Identifiant unique de la catégorie (integer)
-    - `name` : Nom de la catégorie (string)
-  - `img` : URL ou chemin de l'image de l'item (string, nullable, actuellement toujours `null`)
+  - `category` : Nom de la catégorie (string) - **Note** : Retourne uniquement le nom, pas un objet
+  - `img` : Nom du fichier image généré sur le serveur (string ou `null` si aucune image envoyée)
 
 #### Erreurs possibles
 
-**400 Bad Request** - Données manquantes
+**400 Bad Request** - Champ 'data' manquant
+```json
+{
+  "error": "Missing \"data\" field"
+}
+```
+
+**400 Bad Request** - JSON invalide
+```json
+{
+  "error": "Invalid JSON"
+}
+```
+
+**400 Bad Request** - Données manquantes (dans le JSON)
 ```json
 {
   "error": "name and category are required"
@@ -98,6 +112,41 @@ Content-Type: application/json
 ```json
 {
   "error": "name cannot be empty"
+}
+```
+
+**400 Bad Request** - Image trop lourde (> 2 Mo)
+```json
+{
+  "error": "File too large. Maximum size allowed is 2MB."
+}
+```
+
+**Note** : Si la limite serveur PHP est atteinte (avant la validation métier), le message peut être :
+```json
+{
+  "error": "File too large (server limit exceeded)."
+}
+```
+
+**400 Bad Request** - Format d'image invalide
+```json
+{
+  "error": "Invalid file type. Allowed: JPG, PNG, GIF, WEBP"
+}
+```
+
+**500 Internal Server Error** - Erreur d'upload générique
+```json
+{
+  "error": "Upload failed with error code: <code>"
+}
+```
+
+**500 Internal Server Error** - Échec du déplacement du fichier
+```json
+{
+  "error": "Failed to upload image"
 }
 ```
 
@@ -159,7 +208,13 @@ Content-Type: application/json
 - **Rôle requis** : L'utilisateur doit avoir au minimum le rôle `ROLE_USER`
 - **Provider** : L'authentification utilise le provider `app_user_provider` qui recherche les utilisateurs par email dans l'entité `User`
 - **Stateless** : L'authentification est stateless (pas de session), chaque requête doit inclure le token JWT
-- **Format de réponse** : Toutes les réponses sont au format JSON
+- **Format de requête** : Impérativement `multipart/form-data`
+- **Validation JSON** : Le champ `data` doit contenir un JSON valide avec `name` et `category`
+- **Image - Taille** :
+  - Limite logicielle : 2 Mo
+  - Limite serveur (PHP) : Dépend de `upload_max_filesize` et `post_max_size` (doivent être > 2 Mo)
+- **Image - Formats** : Uniquement `image/jpeg`, `image/png`, `image/gif`, `image/webp`
+- **Image - Stockage** : Les images sont renommées (slug + uniqid) et stockées dans le dossier configuré (ex: `public/uploads/items`)
 - **Validation** :
   - Le nom de l'item ne peut pas être vide
   - Le nom de l'item ne peut pas contenir uniquement des espaces (les espaces en début et fin sont automatiquement supprimés)
@@ -169,15 +224,20 @@ Content-Type: application/json
   - Si un nombre est fourni, la recherche se fait par ID
   - Si une chaîne de caractères est fournie, la recherche se fait par nom
   - La recherche par nom est sensible à la casse et doit correspondre exactement
-- **Image** : Le champ `img` est actuellement toujours `null`. La gestion des images sera implémentée ultérieurement
 
 ### Logique métier
 
-1. **Création du ClientItem** : Un nouvel objet `ClientItem` est créé, qui hérite de `Item`
-2. **Association au client** : L'item est automatiquement associé au client connecté via la relation `ManyToOne`
-3. **Catégorie** : La catégorie est recherchée par ID ou par nom et associée à l'item
-4. **Persistance** : L'item est sauvegardé dans la base de données avec le discriminator `client_item`
-5. **Réponse** : L'item créé est retourné avec toutes ses informations, y compris la catégorie complète
+1. **Extraction** : Récupération du JSON depuis le champ `data` et du fichier depuis le champ `image`
+2. **Validation JSON** : Vérification de la présence de `name` et `category`
+3. **Recherche Catégorie** : La catégorie est recherchée par ID ou par nom
+4. **Upload (Si image présente)** :
+   - Vérification de l'erreur d'upload native (taille PHP) - `UPLOAD_ERR_OK`, `UPLOAD_ERR_INI_SIZE`, `UPLOAD_ERR_FORM_SIZE`
+   - Vérification de la taille (2 Mo)
+   - Vérification du type MIME (JPG, PNG, GIF, WEBP)
+   - Renommage sécurisé du fichier (slug + uniqid)
+   - Déplacement vers le dossier d'upload
+5. **Création** : Création de l'entité `ClientItem` liée au client
+6. **Persistance** : Sauvegarde en base de données avec le nom de l'image (ou `null`)
 
 ### Relations entre les données
 
@@ -191,39 +251,41 @@ Content-Type: application/json
 - **POST /api/inventories/add** : Ajoute une quantité d'un item existant (par défaut ou personnalisé) à l'inventaire du client. L'item doit déjà exister.
 - **POST /api/items/add** : Crée un nouvel item personnalisé pour le client. L'item n'existe pas encore et est créé lors de cette opération.
 
-### Exemple d'utilisation complète
+### Exemple d'utilisation complète (CURL)
+
+**Note** : Avec curl, l'option `-F` force le content-type à `multipart/form-data`.
 
 ```bash
 # 1. Obtenir un token
-curl -X POST http://localhost:8000/user/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "client@example.com", "password": "motdepasse123"}'
+export TOKEN="eyJ0eXAiOiJKV1Qi..."
 
-# Réponse: {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."}
-
-# 2. Créer un nouvel item avec category par ID
+# 2. Créer un nouvel item AVEC image
 curl -X POST http://localhost:8000/api/items/add \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..." \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Apples", "category": 1}'
+  -H "Authorization: Bearer $TOKEN" \
+  -F 'data={"name": "Apples", "category": 1}' \
+  -F "image=@/chemin/vers/ma_photo.jpg"
 
-# 3. Créer un nouvel item avec category par nom
+# 3. Créer un nouvel item SANS image
 curl -X POST http://localhost:8000/api/items/add \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..." \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Bananes", "category": "Fruits"}'
+  -H "Authorization: Bearer $TOKEN" \
+  -F 'data={"name": "Bananes", "category": "Fruits"}'
 ```
+
+### Exemple d'utilisation avec PHPStorm HTTP Client
+
+Voir le fichier `test/api/item/add-item.http` pour des exemples complets avec différents cas de test.
 
 ---
 
 ## Notes générales
 
 - **Format des réponses** : Toutes les réponses sont au format JSON
-- **Content-Type** : Les requêtes doivent avoir l'en-tête `Content-Type: application/json`
+- **Content-Type** : Les requêtes doivent avoir l'en-tête `Content-Type: multipart/form-data`
 - **Base URL** : Les routes sont accessibles depuis la base URL configurée (ex: `http://localhost:8000`)
 - **Gestion des erreurs** : Toutes les erreurs suivent un format JSON cohérent avec un champ `code` et `message` ou `error`
 - **Performance** : La création d'un item est une opération simple et rapide. Aucune pagination n'est nécessaire
 - **Unicité** : Les items créés par un client sont uniques à ce client. Plusieurs clients peuvent créer des items avec le même nom, mais ce seront des entités distinctes dans la base de données
 - **Héritage** : Les `ClientItem` héritent de `Item`, ce qui permet de les traiter de manière uniforme avec les items par défaut dans certaines opérations
-- **Images** : La gestion des images n'est pas encore implémentée. Le champ `img` est toujours `null` pour l'instant
-
+- **Hybrid Approach** : L'approche choisie (JSON dans un champ texte + Fichier) permet de conserver la structure de données complexe tout en autorisant l'upload de fichier binaire standard
+- **Configuration Serveur** : Assurez-vous que la configuration `php.ini` autorise les uploads (`file_uploads = On`) et que `upload_max_filesize` est suffisant (recommandé : > 2 Mo)
+- **Réponse category** : La réponse retourne uniquement le nom de la catégorie (string), pas un objet avec `id` et `name`

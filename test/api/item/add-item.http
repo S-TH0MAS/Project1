@@ -1,104 +1,148 @@
 ### Variables
 @baseUrl = http://localhost:8000
-@contentType = application/json
-@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQwNTIxODQsImV4cCI6MTc2NDA1NTc4NCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.bAlhVOc9RhJJwRjD5CtDKVRp4bT1nnt9y0oJIm5BGmgaa5Ybh9xBlOKVvfjDbgCdIIF8ZCnlQ4mKmng3fkamBWZMPotc_gw9A5sjM8hLsbdTa1gq-lPTtFyKSog2fjBFmYiletRyAXoi-EiIqq-kg-_7CWZ3nM5_d9Ta_-bCZqCF3PND4Z405S5PuXOjSIGaGYGbK_sACvpUDKUO1I41QmGxXuu1kWoLbu6BQymn0dvghUzcDzAp9gOT1mY4CNnWpw3GWnBA2lXh2J0JqO63hVPwYVi99jvHuH5OsUUkFfnTuOwghFEvhaMD9wqBMox2_V92iM5NdTxZ-Mu2HUawiA
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQxMzc5MzAsImV4cCI6MTc2NDE0MTUzMCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.iiSigXdvYJl4Aqe3FNp74fuun4nyd9D63Qs1H9htgni8y_nc2vdzFzztr0dRBQBf0OSLBFTqXfa80Fc5TRcE0Wscqv9EcJpiVVUiZllO_Gi9uaKMEhTalwYIzQeumSlQNg7aFf1dyWaGdB6rsYktzHDEFqkjVSEFnnJlczvb7CsLbZldGq3kB8FQy0dCB5pm9AWP4X4RCqncLTaca3lRsihkIDD47W7RZwUZ-75MGNERBhRQchKrCVXNrlwLLxAM05XiuKeEGkSYvNsyTwYWKJc7_mC4Sw__yXX1VAy9EGVB1ZvgH495vo1LoBZphx75GuAOKgaVz15J50CFCilNuw
+### ------------------------------------------------------------------------
+### CAS NOMINAUX (SUCCÈS)
+### ------------------------------------------------------------------------
 
-### IMPORTANT: Obtenez d'abord un token via POST /user/login
-### Remplacez {{token}} ci-dessous par le token obtenu, ou utilisez une variable d'environnement
-
-### Créer un nouvel item avec category par ID (succès)
+### 1. Créer un item AVEC image valide (PNG)
 POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
 
 {
-  "name": "Apples",
+  "name": "Pomme Valid",
   "category": 1
 }
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="valid.png"
+Content-Type: image/png
 
-### Créer un nouvel item avec category par nom (succès)
+< ./img/valid.png
+--MyBoundary--
+
+### 2. Créer un item SANS image (L'image est optionnelle)
 POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
 
 {
-  "name": "Bananes",
+  "name": "Banane Sans Image",
   "category": "Fruits"
 }
+--MyBoundary--
 
-### Test avec name manquant (devrait retourner 400)
+### ------------------------------------------------------------------------
+### CAS D'ERREURS D'IMAGES
+### ------------------------------------------------------------------------
+
+### 3. Erreur : Image trop lourde (> 2Mo)
 POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
 
 {
+  "name": "Pomme Lourde",
   "category": 1
 }
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="unvalid_2mo.png"
+Content-Type: image/png
 
-### Test avec category manquante (devrait retourner 400)
+< ./img/unvalid_2mo.png
+--MyBoundary--
+
+### 4. Erreur : Mauvais format (SVG non autorisé)
 POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
 
 {
-  "name": "Apples"
+  "name": "Pomme Vectorielle",
+  "category": 1
 }
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="unvalid_format.svg"
+Content-Type: image/svg+xml
 
-### Test avec name vide (devrait retourner 400)
+< ./img/unvalid_format.svg
+--MyBoundary--
+
+### 5. Erreur : Mauvais MimeType (Fichier corrompu ou type incohérent)
 POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Fake",
+  "category": 1
+}
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="unvalid_mimetype.png"
+Content-Type: image/png
+
+< ./img/unvalid_mimetype.png
+--MyBoundary--
+
+### ------------------------------------------------------------------------
+### AUTRES ERREURS LOGIQUES (Adaptées au format Multipart)
+### ------------------------------------------------------------------------
+
+### 6. Erreur : Champ 'data' manquant
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="other_field"
+Content-Type: application/json
+
+{}
+--MyBoundary--
+
+### 7. Erreur : JSON invalide dans 'data'
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{ "name": "Broken JSON", "categ...
+--MyBoundary--
+
+### 8. Erreur : Name vide (dans le JSON)
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
 
 {
   "name": "",
   "category": 1
 }
-
-### Test avec name contenant uniquement des espaces (devrait retourner 400)
-POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
-Authorization: Bearer {{token}}
-
-{
-  "name": "   ",
-  "category": 1
-}
-
-### Test avec category ID inexistante (devrait retourner 404)
-POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
-Authorization: Bearer {{token}}
-
-{
-  "name": "Apples",
-  "category": 99999
-}
-
-### Test avec category nom inexistant (devrait retourner 404)
-POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
-Authorization: Bearer {{token}}
-
-{
-  "name": "Apples",
-  "category": "CategoryInexistante"
-}
-
-### Test sans token (devrait retourner 401)
-POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
-
-{
-  "name": "Apples",
-  "category": 1
-}
-
-### Test avec token invalide (devrait retourner 401)
-POST {{baseUrl}}/api/items/add
-Content-Type: {{contentType}}
-Authorization: Bearer invalid_token_here
-
-{
-  "name": "Apples",
-  "category": 1
-}
-
+--MyBoundary--
