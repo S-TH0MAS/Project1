@@ -1,10 +1,12 @@
 # Tests API - Routes Item
 
-Ce dossier contient les fichiers de test pour les routes liées aux items utilisateur.
+Ce dossier contient les fichiers de test pour les routes liées aux items.
 
 ## Fichiers disponibles
 
-- **add-item.http** : Tests pour créer un nouvel item utilisateur (`POST /api/items/add`)
+- **add-item.http** : Tests pour créer un nouvel item utilisateur (`POST /api/items/add`) - **Ancien fichier, conservé pour compatibilité**
+- **client-items.http** : Tests complets pour les items client (`POST /api/items/add`, `PATCH /api/items/{id}`, `DELETE /api/items/{id}`)
+- **admin-items.http** : Tests complets pour les items admin (`POST /api/admin/items/add`, `PATCH /api/admin/items/{id}`, `DELETE /api/admin/items/{id}`)
 
 ## Utilisation dans PHPStorm
 
@@ -47,7 +49,7 @@ Ce dossier contient les fichiers de test pour les routes liées aux items utilis
 
 ## Réponses attendues
 
-### Créer un nouvel item (POST /api/items/add)
+### Créer un nouvel item client (POST /api/items/add)
 - **201 Created** : Item créé avec succès
   ```json
   {
@@ -103,15 +105,115 @@ Pour utiliser un environnement spécifique dans PHPStorm :
 1. Cliquez sur l'icône d'environnement en haut à droite
 2. Sélectionnez l'environnement souhaité
 
+## Réponses attendues - Routes Admin
+
+### Créer un nouvel item admin (POST /api/admin/items/add)
+- **201 Created** : Item créé avec succès (identique à la route client)
+- **400 Bad Request** : Données manquantes ou invalides
+- **401 Unauthorized** : Token manquant ou invalide
+- **403 Forbidden** : L'utilisateur n'est pas un admin
+
+### Mettre à jour un item admin (POST /api/admin/items/update/{id})
+- **200 OK** : Item mis à jour avec succès
+  ```json
+  {
+    "message": "Item updated successfully",
+    "item": {
+      "id": 1,
+      "name": "Pomme Globale Modifiée",
+      "category": "Fruits",
+      "img": "valid-1234567890.png"
+    }
+  }
+  ```
+- **400 Bad Request** : Aucune donnée fournie (ni data ni image)
+- **404 Not Found** : Item non trouvé ou c'est un ClientItem (seuls les Item globaux sont modifiables)
+- **401 Unauthorized** : Token manquant ou invalide
+- **403 Forbidden** : L'utilisateur n'est pas un admin
+
+### Supprimer un item admin (DELETE /api/admin/items/delete/{id})
+- **200 OK** : Item supprimé avec succès
+  ```json
+  {
+    "message": "Item deleted successfully"
+  }
+  ```
+- **404 Not Found** : Item non trouvé ou c'est un ClientItem (seuls les Item globaux sont supprimables)
+- **401 Unauthorized** : Token manquant ou invalide
+- **403 Forbidden** : L'utilisateur n'est pas un admin
+
+## Réponses attendues - Routes Client
+
+### Mettre à jour un item client (POST /api/items/update/{id})
+- **200 OK** : Item mis à jour avec succès
+  ```json
+  {
+    "message": "Item updated successfully",
+    "item": {
+      "id": 1,
+      "name": "Pomme Client Modifiée",
+      "category": "Fruits",
+      "img": "valid-1234567890.png"
+    }
+  }
+  ```
+- **400 Bad Request** : Aucune donnée fournie (ni data ni image)
+- **404 Not Found** : Item non trouvé ou n'appartient pas au client connecté
+- **401 Unauthorized** : Token manquant ou invalide
+- **403 Forbidden** : L'utilisateur n'est pas un Client
+
+### Supprimer un item client (DELETE /api/items/delete/{id})
+- **200 OK** : Item supprimé avec succès
+  ```json
+  {
+    "message": "Item deleted successfully"
+  }
+  ```
+- **404 Not Found** : Item non trouvé ou n'appartient pas au client connecté
+- **401 Unauthorized** : Token manquant ou invalide
+- **403 Forbidden** : L'utilisateur n'est pas un Client
+
 ## Notes importantes
 
-### POST /api/items/add
+### POST /api/items/add (Client)
 - Cette route crée un `ClientItem` (item personnalisé appartenant à l'utilisateur connecté)
 - L'item est automatiquement lié au client connecté
-- Le champ `img` est actuellement toujours `null` (gestion des images à venir)
 - La catégorie peut être spécifiée soit par son ID (integer) soit par son nom (string)
 - Si le nom de l'item contient uniquement des espaces, il sera considéré comme vide et retournera une erreur 400
 - L'item créé est un `ClientItem` qui hérite de `Item`, il apparaîtra donc dans la liste des items de l'utilisateur
+
+### POST /api/admin/items/add (Admin)
+- Cette route crée un `Item` global (non lié à un client)
+- L'item est accessible à tous les utilisateurs
+- Les mêmes règles de validation s'appliquent que pour les items client
+- Seuls les utilisateurs avec le rôle `ROLE_ADMIN` peuvent créer des items globaux
+
+### POST /api/items/update/{id} (Client)
+- Permet la mise à jour partielle d'un item client
+- Utilise POST au lieu de PATCH pour supporter multipart/form-data
+- Seuls les champs fournis seront mis à jour (nom, catégorie, image)
+- L'image peut être mise à jour indépendamment
+- Seul le propriétaire de l'item peut le modifier
+
+### POST /api/admin/items/update/{id} (Admin)
+- Permet la mise à jour partielle d'un item global
+- Utilise POST au lieu de PATCH pour supporter multipart/form-data
+- Seuls les `Item` globaux peuvent être modifiés (pas les `ClientItem`)
+- Les mêmes règles de validation s'appliquent que pour les items client
+
+### DELETE /api/items/delete/{id} (Client)
+- Supprime un item client et son image associée
+- Seul le propriétaire de l'item peut le supprimer
+
+### DELETE /api/admin/items/delete/{id} (Admin)
+- Supprime un item global et son image associée
+- Seuls les `Item` globaux peuvent être supprimés (pas les `ClientItem`)
+
+### Différence entre Item et ClientItem
+- **Item** : Item global créé par un admin, accessible à tous les utilisateurs
+- **ClientItem** : Item personnalisé créé par un client, uniquement accessible à ce client
+- Les admins peuvent créer/modifier/supprimer uniquement les `Item` globaux
+- Les clients peuvent créer/modifier/supprimer uniquement leurs propres `ClientItem`
 
 ### Différence avec POST /api/inventories/add
 - `POST /api/items/add` : Crée un nouvel item personnalisé (ClientItem) pour l'utilisateur

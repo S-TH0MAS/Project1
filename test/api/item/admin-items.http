@@ -1,0 +1,302 @@
+### Variables
+@baseUrl = http://localhost:8000
+@adminToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQxNTgwMzcsImV4cCI6MTc2NDE2MTYzNywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQGFkbWluLm1haWwifQ.gWLjL9KCLqfGHihLx6s8l85bhxDduOhouRGr9cRb2c_n05O0PPU8wJgeEOdtbLuRg2gFbEWjbpBHGuZgeLXCUP-ujp12bwuqFz61Ary8M30wbCptv4iM2kUCeW5gHWeOgA51MyQRf84bLWq_Cq1ue9DCxzTQ9ASSoj-iNuXUkHjWFaAsipRWTm1mr8qHX2qSaNU3ph3giQm11Ms-PB_-z3D5ZvNa5RJ5VsMfyTwazuUuNNB9BCe5TKyF607rnuvFPVXpJ07JB1GyJrvkC27qgU_U4hTc0NVu22e-1JGs-Cp7SyJqCzzuxTGf7JG5Sb8U3voT_TwhdnAU8kVXna19iA
+@itemId = 161
+
+### IMPORTANT: Obtenez d'abord un token ADMIN via POST /user/login
+### Remplacez {{adminToken}} ci-dessous par le token obtenu d'un utilisateur avec ROLE_ADMIN
+### IMPORTANT: Remplacez {{itemId}} par l'ID d'un Item global (pas un ClientItem)
+
+### ------------------------------------------------------------------------
+### POST /api/admin/items/add - CRÉER UN ITEM ADMIN (GLOBAL)
+### ------------------------------------------------------------------------
+
+### 1. Créer un item global AVEC image valide (PNG)
+POST {{baseUrl}}/api/admin/items/add
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Globale",
+  "category": 11
+}
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="valid.png"
+Content-Type: image/png
+
+< ./img/valid.png
+--MyBoundary--
+
+### 2. Créer un item global SANS image
+POST {{baseUrl}}/api/admin/items/add
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Banane Globale Sans Image",
+  "category": "Fruits"
+}
+--MyBoundary--
+
+### 3. Créer un item global avec catégorie par nom (string)
+POST {{baseUrl}}/api/admin/items/add
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Carotte Globale",
+  "category": "Légumes"
+}
+--MyBoundary--
+
+### ------------------------------------------------------------------------
+### POST /api/admin/items/update/{id} - METTRE À JOUR UN ITEM ADMIN (GLOBAL)
+### ------------------------------------------------------------------------
+
+### 4. Mettre à jour le nom uniquement
+POST {{baseUrl}}/api/admin/items/update/{{itemId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Globale Modifiée"
+}
+--MyBoundary--
+
+### 5. Mettre à jour la catégorie uniquement
+POST {{baseUrl}}/api/admin/items/update/{{itemId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "category": 2
+}
+--MyBoundary--
+
+### 6. Mettre à jour le nom et la catégorie
+POST {{baseUrl}}/api/admin/items/update/{{itemId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Globale Mise à Jour",
+  "category": "Fruits"
+}
+--MyBoundary--
+
+### 7. Mettre à jour l'image uniquement
+POST {{baseUrl}}/api/admin/items/update/{{itemId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="valid.png"
+Content-Type: image/png
+
+< ./img/valid.png
+--MyBoundary--
+
+### 8. Mettre à jour tout (nom, catégorie et image)
+POST {{baseUrl}}/api/admin/items/update/{{itemId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Globale Complète",
+  "category": 1
+}
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="valid.png"
+Content-Type: image/png
+
+< ./img/valid.png
+--MyBoundary--
+
+### ------------------------------------------------------------------------
+### DELETE /api/admin/items/delete/{id} - SUPPRIMER UN ITEM ADMIN (GLOBAL)
+### ------------------------------------------------------------------------
+
+### 9. Supprimer un item global
+DELETE {{baseUrl}}/api/admin/items/delete/{{itemId}}
+Authorization: Bearer {{adminToken}}
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - POST
+### ------------------------------------------------------------------------
+
+### 10. Erreur : Champ 'data' manquant
+POST {{baseUrl}}/api/admin/items/add
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="other_field"
+Content-Type: application/json
+
+{}
+--MyBoundary--
+
+### 11. Erreur : Name vide
+POST {{baseUrl}}/api/admin/items/add
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "",
+  "category": 1
+}
+--MyBoundary--
+
+### 12. Erreur : Catégorie inexistante
+POST {{baseUrl}}/api/admin/items/add
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Item Test",
+  "category": 99999
+}
+--MyBoundary--
+
+### 13. Erreur : Image trop lourde (> 2Mo)
+POST {{baseUrl}}/api/admin/items/add
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Lourde",
+  "category": 1
+}
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="unvalid_2mo.png"
+Content-Type: image/png
+
+< ./img/unvalid_2mo.png
+--MyBoundary--
+
+### 14. Erreur : Mauvais format d'image (SVG non autorisé)
+POST {{baseUrl}}/api/admin/items/add
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Vectorielle",
+  "category": 1
+}
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="unvalid_format.svg"
+Content-Type: image/svg+xml
+
+< ./img/unvalid_format.svg
+--MyBoundary--
+
+### 15. Erreur : Utilisateur non admin (403 Forbidden)
+POST {{baseUrl}}/api/admin/items/add
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Tentative Non Admin",
+  "category": 1
+}
+--MyBoundary--
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - PATCH
+### ------------------------------------------------------------------------
+
+### 16. Erreur : Item inexistant
+POST {{baseUrl}}/api/admin/items/update/99999
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Item Inexistant"
+}
+--MyBoundary--
+
+### 17. Erreur : Tentative de modification d'un ClientItem (seuls les Item globaux sont modifiables)
+POST {{baseUrl}}/api/admin/items/update/{{itemId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Tentative Modification ClientItem"
+}
+--MyBoundary--
+
+### 18. Erreur : Aucune donnée fournie (ni data ni image)
+POST {{baseUrl}}/api/admin/items/update/{{itemId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary--
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - DELETE
+### ------------------------------------------------------------------------
+
+### 19. Erreur : Item inexistant
+DELETE {{baseUrl}}/api/admin/items/delete/99999
+Authorization: Bearer {{adminToken}}
+
+### 20. Erreur : Tentative de suppression d'un ClientItem (seuls les Item globaux sont supprimables)
+DELETE {{baseUrl}}/api/admin/items/delete/{{itemId}}
+Authorization: Bearer {{adminToken}}
+

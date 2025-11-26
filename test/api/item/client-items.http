@@ -1,0 +1,286 @@
+### Variables
+@baseUrl = http://localhost:8000
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQxNTgzNzcsImV4cCI6MTc2NDE2MTk3Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.bP9qe1PvY4Eg7m-82q-RmlHDp6K23O4WwniaicsaY077tactno4yN0aGrrAU3erSYbb5N3eOCdjt5r76eKbmwy301kRTsRHByN699197MCmndg6a4VrZ_AULw1g6GeDRW7VC5E7Zx0f8Frb9nLNsfmL18hKxgiwevIW-JTeU0ceh3U19bpIOJfGmcBHMSq3ypBjxXRK99St9_16-wFM8U3E7f96DZjeM1yni7aAqU5K_yzONx2mby57qNIqbClsTm5xdVJfYMO_Q7tyOT2Q450T_jeudvqFy8SFlkEUwqaEWBmRtYdzCxEj-uSwykQC3_ar_aaxq_MlaQgoe0DrRPA
+@itemId = 163
+
+### IMPORTANT: Obtenez d'abord un token via POST /user/login
+### Remplacez {{token}} ci-dessous par le token obtenu, ou utilisez une variable d'environnement
+### IMPORTANT: Remplacez {{itemId}} par l'ID d'un item créé par le client connecté
+
+### ------------------------------------------------------------------------
+### POST /api/items/add - CRÉER UN ITEM CLIENT
+### ------------------------------------------------------------------------
+
+### 1. Créer un item AVEC image valide (PNG)
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Client",
+  "category": 11
+}
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="valid.png"
+Content-Type: image/png
+
+< ./img/valid.png
+--MyBoundary--
+
+### 2. Créer un item SANS image (L'image est optionnelle)
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Banane Client Sans Image",
+  "category": "Fruits"
+}
+--MyBoundary--
+
+### 3. Créer un item avec catégorie par nom (string)
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Carotte Client",
+  "category": "Légumes"
+}
+--MyBoundary--
+
+### ------------------------------------------------------------------------
+### POST /api/items/update/{id} - METTRE À JOUR UN ITEM CLIENT
+### ------------------------------------------------------------------------
+
+### 4. Mettre à jour le nom uniquement
+POST {{baseUrl}}/api/items/update/{{itemId}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Client Modifiée"
+}
+--MyBoundary--
+
+### 5. Mettre à jour la catégorie uniquement
+POST {{baseUrl}}/api/items/update/{{itemId}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "category": 2
+}
+--MyBoundary--
+
+### 6. Mettre à jour le nom et la catégorie
+POST {{baseUrl}}/api/items/update/{{itemId}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Client Mise à Jour",
+  "category": "Fruits"
+}
+--MyBoundary--
+
+### 7. Mettre à jour l'image uniquement
+POST {{baseUrl}}/api/items/update/{{itemId}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="valid.png"
+Content-Type: image/png
+
+< ./img/valid.png
+--MyBoundary--
+
+### 8. Mettre à jour tout (nom, catégorie et image)
+POST {{baseUrl}}/api/items/update/{{itemId}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Client Complète",
+  "category": 1
+}
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="valid.png"
+Content-Type: image/png
+
+< ./img/valid.png
+--MyBoundary--
+
+### ------------------------------------------------------------------------
+### DELETE /api/items/delete/{id} - SUPPRIMER UN ITEM CLIENT
+### ------------------------------------------------------------------------
+
+### 9. Supprimer un item client
+DELETE {{baseUrl}}/api/items/delete/{{itemId}}
+Authorization: Bearer {{token}}
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - POST
+### ------------------------------------------------------------------------
+
+### 10. Erreur : Champ 'data' manquant
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="other_field"
+Content-Type: application/json
+
+{}
+--MyBoundary--
+
+### 11. Erreur : Name vide
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "",
+  "category": 1
+}
+--MyBoundary--
+
+### 12. Erreur : Catégorie inexistante
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Item Test",
+  "category": 99999
+}
+--MyBoundary--
+
+### 13. Erreur : Image trop lourde (> 2Mo)
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Lourde",
+  "category": 1
+}
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="unvalid_2mo.png"
+Content-Type: image/png
+
+< ./img/unvalid_2mo.png
+--MyBoundary--
+
+### 14. Erreur : Mauvais format d'image (SVG non autorisé)
+POST {{baseUrl}}/api/items/add
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Pomme Vectorielle",
+  "category": 1
+}
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="unvalid_format.svg"
+Content-Type: image/svg+xml
+
+< ./img/unvalid_format.svg
+--MyBoundary--
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - PATCH
+### ------------------------------------------------------------------------
+
+### 15. Erreur : Item inexistant
+POST {{baseUrl}}/api/items/update/99999
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Item Inexistant"
+}
+--MyBoundary--
+
+### 16. Erreur : Item appartenant à un autre client
+POST {{baseUrl}}/api/items/update/{{itemId}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "name": "Tentative Modification Autre Client"
+}
+--MyBoundary--
+
+### 17. Erreur : Aucune donnée fournie (ni data ni image)
+POST {{baseUrl}}/api/items/update/{{itemId}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary--
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - DELETE
+### ------------------------------------------------------------------------
+
+### 18. Erreur : Item inexistant
+DELETE {{baseUrl}}/api/items/delete/99999
+Authorization: Bearer {{token}}
+
+### 19. Erreur : Item appartenant à un autre client
+DELETE {{baseUrl}}/api/items/delete/{{itemId}}
+Authorization: Bearer {{token}}
+
