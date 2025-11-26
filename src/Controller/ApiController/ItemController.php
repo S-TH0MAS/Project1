@@ -39,14 +39,14 @@ class ItemController extends AbstractController
         $user = $this->getUser();
 
         if (!$user instanceof Client) {
-            return new JsonResponse(['error' => 'User must be a client'], Response::HTTP_FORBIDDEN);
+            return $this->jsonError(Response::HTTP_FORBIDDEN, 'Forbidden', 'User must be a client');
         }
 
         $jsonString = $request->request->get('data');
         $uploadedFile = $request->files->get('image');
 
         if (!$jsonString) {
-            return new JsonResponse(['error' => 'Missing "data" field'], Response::HTTP_BAD_REQUEST);
+            return $this->jsonError(Response::HTTP_BAD_REQUEST, 'Bad Request', 'Missing "data" field');
         }
 
         try {
@@ -61,7 +61,7 @@ class ItemController extends AbstractController
             : $categoryRepository->findOneBy(['name' => $categoryInput]);
 
         if (!$category) {
-            return new JsonResponse(['error' => 'Category not found'], Response::HTTP_NOT_FOUND);
+            return $this->jsonError(Response::HTTP_NOT_FOUND, 'Not Found', 'Category not found');
         }
 
         $newFilename = null;
@@ -69,20 +69,26 @@ class ItemController extends AbstractController
         if ($uploadedFile) {
             if ($uploadedFile->getError() !== UPLOAD_ERR_OK) {
                 if ($uploadedFile->getError() === UPLOAD_ERR_INI_SIZE || $uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE) {
-                    return new JsonResponse([
-                        'error' => 'File too large (server limit exceeded).'
-                    ], Response::HTTP_BAD_REQUEST);
+                    return $this->jsonError(
+                        Response::HTTP_BAD_REQUEST,
+                        'Bad Request',
+                        'File too large (server limit exceeded).'
+                    );
                 }
 
-                return new JsonResponse([
-                    'error' => 'Upload failed with error code: ' . $uploadedFile->getError()
-                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return $this->jsonError(
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    'Internal Server Error',
+                    'Upload failed with error code: ' . $uploadedFile->getError()
+                );
             }
 
             if ($uploadedFile->getSize() > self::MAX_UPLOAD_SIZE) {
-                return new JsonResponse([
-                    'error' => 'File too large. Maximum size allowed is 2MB.'
-                ], Response::HTTP_BAD_REQUEST);
+                return $this->jsonError(
+                    Response::HTTP_BAD_REQUEST,
+                    'Bad Request',
+                    'File too large. Maximum size allowed is 2MB.'
+                );
             }
 
             $allowedMimeTypes = [
@@ -93,9 +99,11 @@ class ItemController extends AbstractController
             ];
 
             if (!in_array($uploadedFile->getMimeType(), $allowedMimeTypes)) {
-                return new JsonResponse([
-                    'error' => 'Invalid file type. Allowed: JPG, PNG, GIF, WEBP'
-                ], Response::HTTP_BAD_REQUEST);
+                return $this->jsonError(
+                    Response::HTTP_BAD_REQUEST,
+                    'Bad Request',
+                    'Invalid file type. Allowed: JPG, PNG, GIF, WEBP'
+                );
             }
 
             $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -108,7 +116,11 @@ class ItemController extends AbstractController
                     $newFilename
                 );
             } catch (FileException $e) {
-                return new JsonResponse(['error' => 'Failed to upload image'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return $this->jsonError(
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    'Internal Server Error',
+                    'Failed to upload image'
+                );
             }
         }
 

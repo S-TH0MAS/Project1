@@ -32,10 +32,7 @@ class RecipeController extends AbstractController
         $user = $this->getUser();
         
         if (!$user instanceof Client) {
-            return new JsonResponse(
-                ['error' => 'User must be a client'],
-                Response::HTTP_FORBIDDEN
-            );
+            return $this->jsonError(Response::HTTP_FORBIDDEN, 'Forbidden', 'User must be a client');
         }
 
         try {
@@ -61,16 +58,15 @@ class RecipeController extends AbstractController
             $stock[$itemName] = $quantity;
         }
 
-        // Si le stock est vide, retourner une erreur
         if (empty($stock)) {
-            return new JsonResponse(
-                ['error' => 'No ingredients available in inventory'],
-                Response::HTTP_BAD_REQUEST
+            return $this->jsonError(
+                Response::HTTP_BAD_REQUEST,
+                'Bad Request',
+                'No ingredients available in inventory'
             );
         }
 
         try {
-            // Générer la recette via le service Gemini
             $recipe = $recipeRequestFormat->generateRecipe($stock, $userRequest);
 
             return new JsonResponse(
@@ -78,12 +74,10 @@ class RecipeController extends AbstractController
                 Response::HTTP_OK
             );
         } catch (Exception $e) {
-            return new JsonResponse(
-                [
-                    'error' => 'Failed to generate recipe',
-                    'message' => $e->getMessage()
-                ],
-                Response::HTTP_INTERNAL_SERVER_ERROR
+            return $this->jsonError(
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+                'Internal Server Error',
+                'Failed to generate recipe: ' . $e->getMessage()
             );
         }
     }

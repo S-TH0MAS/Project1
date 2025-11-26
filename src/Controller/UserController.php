@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController extends AbstractController
 {
     use ApiResponseTrait;
+
     #[Route('/login', name: 'api_login', methods: ['POST'])]
     public function login(): void
     {
@@ -43,14 +44,14 @@ class UserController extends AbstractController
             return $this->jsonException($e);
         }
 
-        // Vérifier si un utilisateur (ou client) existe déjà avec cet email
         $existingUser = $entityManager->getRepository(User::class)
             ->findOneBy(['email' => $dto->getEmail()]);
 
         if ($existingUser) {
-            return new JsonResponse(
-                ['error' => 'User with this email already exists'],
-                Response::HTTP_CONFLICT
+            return $this->jsonError(
+                Response::HTTP_CONFLICT,
+                'Conflict',
+                'User with this email already exists'
             );
         }
 
@@ -63,16 +64,17 @@ class UserController extends AbstractController
         $hashedPassword = $passwordHasher->hashPassword($client, $dto->getPassword());
         $client->setPassword($hashedPassword);
 
-        // Valider l'entité
         $errors = $validator->validate($client);
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
                 $errorMessages[] = $error->getPropertyPath() . ': ' . $error->getMessage();
             }
-            return new JsonResponse(
-                ['error' => 'Validation failed', 'details' => $errorMessages],
-                Response::HTTP_BAD_REQUEST
+            return $this->jsonError(
+                Response::HTTP_BAD_REQUEST,
+                'Validation Error',
+                'Validation failed',
+                $errorMessages
             );
         }
 

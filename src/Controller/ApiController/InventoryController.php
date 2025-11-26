@@ -6,7 +6,6 @@ use App\DTO\Api\Inventory\AddInventoryDto;
 use App\DTO\Api\Inventory\RemoveInventoryDto;
 use App\Entity\Client;
 use App\Entity\Inventory;
-use App\Entity\Item;
 use App\Repository\ClientItemRepository;
 use App\Repository\InventoryRepository;
 use App\Repository\ItemRepository;
@@ -24,6 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class InventoryController extends AbstractController
 {
     use ApiResponseTrait;
+
     #[Route('', name: 'api_inventories_list', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function list(
@@ -31,14 +31,10 @@ class InventoryController extends AbstractController
         ClientItemRepository $clientItemRepository,
         InventoryRepository $inventoryRepository
     ): JsonResponse {
-        // Récupérer l'utilisateur connecté (qui doit être un Client)
         $user = $this->getUser();
         
         if (!$user instanceof Client) {
-            return new JsonResponse(
-                ['error' => 'User must be a client'],
-                Response::HTTP_FORBIDDEN
-            );
+            return $this->jsonError(Response::HTTP_FORBIDDEN, 'Forbidden', 'User must be a client');
         }
 
         // --- Étape 1 : Récupérer tous les items (Item non client)
@@ -142,10 +138,7 @@ class InventoryController extends AbstractController
         $user = $this->getUser();
         
         if (!$user instanceof Client) {
-            return new JsonResponse(
-                ['error' => 'User must be a client'],
-                Response::HTTP_FORBIDDEN
-            );
+            return $this->jsonError(Response::HTTP_FORBIDDEN, 'Forbidden', 'User must be a client');
         }
 
         try {
@@ -157,16 +150,10 @@ class InventoryController extends AbstractController
         $itemId = $dto->getItemId();
         $quantity = $dto->getQuantity();
 
-        // Vérifier que l'item existe
         $item = $itemRepository->find($itemId);
         if (!$item) {
-            return new JsonResponse(
-                ['error' => 'Item not found'],
-                Response::HTTP_NOT_FOUND
-            );
+            return $this->jsonError(Response::HTTP_NOT_FOUND, 'Not Found', 'Item not found');
         }
-
-        // Vérifier si l'inventory existe déjà pour ce client et cet item
         $existingInventory = $inventoryRepository->findOneBy([
             'client' => $user,
             'item' => $item
@@ -223,10 +210,7 @@ class InventoryController extends AbstractController
         $user = $this->getUser();
         
         if (!$user instanceof Client) {
-            return new JsonResponse(
-                ['error' => 'User must be a client'],
-                Response::HTTP_FORBIDDEN
-            );
+            return $this->jsonError(Response::HTTP_FORBIDDEN, 'Forbidden', 'User must be a client');
         }
 
         try {
@@ -238,16 +222,10 @@ class InventoryController extends AbstractController
         $itemId = $dto->getItemId();
         $quantity = $dto->getQuantity();
 
-        // Vérifier que l'item existe
         $item = $itemRepository->find($itemId);
         if (!$item) {
-            return new JsonResponse(
-                ['error' => 'Item not found'],
-                Response::HTTP_NOT_FOUND
-            );
+            return $this->jsonError(Response::HTTP_NOT_FOUND, 'Not Found', 'Item not found');
         }
-
-        // Vérifier si l'inventory existe pour ce client et cet item
         $existingInventory = $inventoryRepository->findOneBy([
             'client' => $user,
             'item' => $item
