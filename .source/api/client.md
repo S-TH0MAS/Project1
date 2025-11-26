@@ -66,6 +66,8 @@ Pour un utilisateur avec le rôle `ROLE_ADMIN` :
 
 #### Erreurs possibles
 
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
+
 **401 Unauthorized** - Token manquant
 ```json
 {
@@ -93,7 +95,9 @@ Pour un utilisateur avec le rôle `ROLE_ADMIN` :
 **403 Forbidden** - L'utilisateur n'est pas un Client (et n'est pas admin)
 ```json
 {
-  "error": "User must be a client"
+  "code": 403,
+  "error": "Forbidden",
+  "message": "User must be a client"
 }
 ```
 
@@ -163,7 +167,7 @@ curl -X GET http://localhost:8000/api/client \
 - **Format des réponses** : Toutes les réponses sont au format JSON
 - **Content-Type** : Les requêtes doivent avoir l'en-tête `Content-Type: application/json`
 - **Base URL** : Les routes sont accessibles depuis la base URL configurée (ex: `http://localhost:8000`)
-- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON cohérent avec un champ `code` et `message` ou `error`
+- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON uniformisé. Voir [error-responses.md](error-responses.md) pour plus de détails
 - **Différence Client/Admin** : La principale différence dans la réponse est la présence ou l'absence du champ `name`. Les admins n'ont pas de nom retourné, même s'ils sont techniquement des `Client` en base de données
 - **Rôles** : Le système garantit que tous les utilisateurs ont au minimum le rôle `ROLE_USER`, même si ce rôle n'est pas explicitement stocké en base de données
 

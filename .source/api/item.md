@@ -87,73 +87,81 @@ Content-Type: image/jpeg
 
 #### Erreurs possibles
 
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
+
 **400 Bad Request** - Champ 'data' manquant
 ```json
 {
-  "error": "Missing \"data\" field"
+  "code": 400,
+  "error": "Bad Request",
+  "message": "Missing \"data\" field"
 }
 ```
 
-**400 Bad Request** - JSON invalide
+**400 Bad Request** - Erreur de validation (JSON invalide, données manquantes, etc.)
 ```json
 {
-  "error": "Invalid JSON"
-}
-```
-
-**400 Bad Request** - Données manquantes (dans le JSON)
-```json
-{
-  "error": "name and category are required"
-}
-```
-
-**400 Bad Request** - Nom vide
-```json
-{
-  "error": "name cannot be empty"
+  "code": 400,
+  "error": "Validation Error",
+  "message": "Les données fournies ne sont pas valides",
+  "details": [
+    "name: This value should not be blank.",
+    "category: This value should not be null."
+  ]
 }
 ```
 
 **400 Bad Request** - Image trop lourde (> 2 Mo)
 ```json
 {
-  "error": "File too large. Maximum size allowed is 2MB."
+  "code": 400,
+  "error": "Bad Request",
+  "message": "File too large. Maximum size allowed is 2MB."
 }
 ```
 
 **Note** : Si la limite serveur PHP est atteinte (avant la validation métier), le message peut être :
 ```json
 {
-  "error": "File too large (server limit exceeded)."
+  "code": 400,
+  "error": "Bad Request",
+  "message": "File too large (server limit exceeded)."
 }
 ```
 
 **400 Bad Request** - Format d'image invalide
 ```json
 {
-  "error": "Invalid file type. Allowed: JPG, PNG, GIF, WEBP"
+  "code": 400,
+  "error": "Bad Request",
+  "message": "Invalid file type. Allowed: JPG, PNG, GIF, WEBP"
 }
 ```
 
 **500 Internal Server Error** - Erreur d'upload générique
 ```json
 {
-  "error": "Upload failed with error code: <code>"
+  "code": 500,
+  "error": "Upload Failed",
+  "message": "Upload failed with error code: <code>"
 }
 ```
 
 **500 Internal Server Error** - Échec du déplacement du fichier
 ```json
 {
-  "error": "Failed to upload image"
+  "code": 500,
+  "error": "Upload Failed",
+  "message": "Failed to upload image"
 }
 ```
 
 **404 Not Found** - Catégorie non trouvée
 ```json
 {
-  "error": "Category not found"
+  "code": 404,
+  "error": "Not Found",
+  "message": "Category not found"
 }
 ```
 
@@ -184,7 +192,9 @@ Content-Type: image/jpeg
 **403 Forbidden** - L'utilisateur n'est pas un Client
 ```json
 {
-  "error": "User must be a client"
+  "code": 403,
+  "error": "Forbidden",
+  "message": "User must be a client"
 }
 ```
 
@@ -282,7 +292,7 @@ Voir le fichier `test/api/item/add-item.http` pour des exemples complets avec di
 - **Format des réponses** : Toutes les réponses sont au format JSON
 - **Content-Type** : Les requêtes doivent avoir l'en-tête `Content-Type: multipart/form-data`
 - **Base URL** : Les routes sont accessibles depuis la base URL configurée (ex: `http://localhost:8000`)
-- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON cohérent avec un champ `code` et `message` ou `error`
+- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON uniformisé. Voir [error-responses.md](error-responses.md) pour plus de détails
 - **Performance** : La création d'un item est une opération simple et rapide. Aucune pagination n'est nécessaire
 - **Unicité** : Les items créés par un client sont uniques à ce client. Plusieurs clients peuvent créer des items avec le même nom, mais ce seront des entités distinctes dans la base de données
 - **Héritage** : Les `ClientItem` héritent de `Item`, ce qui permet de les traiter de manière uniforme avec les items par défaut dans certaines opérations

@@ -151,6 +151,8 @@ Content-Type: application/json
 
 #### Erreurs possibles
 
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
+
 **401 Unauthorized** - Token manquant ou invalide
 ```json
 {
@@ -178,7 +180,9 @@ Content-Type: application/json
 **403 Forbidden** - L'utilisateur n'est pas un Client
 ```json
 {
-  "error": "User must be a client"
+  "code": 403,
+  "error": "Forbidden",
+  "message": "User must be a client"
 }
 ```
 
@@ -290,24 +294,27 @@ Si l'inventory existait déjà, la quantité est ajoutée à la quantité exista
 
 #### Erreurs possibles
 
-**400 Bad Request** - Données manquantes
-```json
-{
-  "error": "itemId and quantity are required"
-}
-```
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
 
-**400 Bad Request** - Quantité invalide
+**400 Bad Request** - Erreur de validation (données manquantes, quantité invalide, etc.)
 ```json
 {
-  "error": "Quantity must be greater than 0"
+  "code": 400,
+  "error": "Validation Error",
+  "message": "Les données fournies ne sont pas valides",
+  "details": [
+    "itemId: This value should not be null.",
+    "quantity: This value should be greater than 0."
+  ]
 }
 ```
 
 **404 Not Found** - Item non trouvé
 ```json
 {
-  "error": "Item not found"
+  "code": 404,
+  "error": "Not Found",
+  "message": "Item not found"
 }
 ```
 
@@ -322,7 +329,9 @@ Si l'inventory existait déjà, la quantité est ajoutée à la quantité exista
 **403 Forbidden** - L'utilisateur n'est pas un Client
 ```json
 {
-  "error": "User must be a client"
+  "code": 403,
+  "error": "Forbidden",
+  "message": "User must be a client"
 }
 ```
 
@@ -415,24 +424,27 @@ Si l'inventory n'existe pas, la route retourne un succès sans erreur :
 
 #### Erreurs possibles
 
-**400 Bad Request** - Données manquantes
-```json
-{
-  "error": "itemId and quantity are required"
-}
-```
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
 
-**400 Bad Request** - Quantité invalide
+**400 Bad Request** - Erreur de validation (données manquantes, quantité invalide, etc.)
 ```json
 {
-  "error": "Quantity must be greater than 0"
+  "code": 400,
+  "error": "Validation Error",
+  "message": "Les données fournies ne sont pas valides",
+  "details": [
+    "itemId: This value should not be null.",
+    "quantity: This value should be greater than 0."
+  ]
 }
 ```
 
 **404 Not Found** - Item non trouvé
 ```json
 {
-  "error": "Item not found"
+  "code": 404,
+  "error": "Not Found",
+  "message": "Item not found"
 }
 ```
 
@@ -447,7 +459,9 @@ Si l'inventory n'existe pas, la route retourne un succès sans erreur :
 **403 Forbidden** - L'utilisateur n'est pas un Client
 ```json
 {
-  "error": "User must be a client"
+  "code": 403,
+  "error": "Forbidden",
+  "message": "User must be a client"
 }
 ```
 
@@ -475,7 +489,7 @@ Si l'inventory n'existe pas, la route retourne un succès sans erreur :
 - **Format des réponses** : Toutes les réponses sont au format JSON
 - **Content-Type** : Les requêtes doivent avoir l'en-tête `Content-Type: application/json`
 - **Base URL** : Les routes sont accessibles depuis la base URL configurée (ex: `http://localhost:8000`)
-- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON cohérent avec un champ `code` et `message` ou `error`
+- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON uniformisé. Voir [error-responses.md](error-responses.md) pour plus de détails
 - **Performance** : La route retourne tous les items en une seule requête. Pour de grandes quantités de données, une pagination pourrait être ajoutée dans le futur
 - **Relations** : 
   - Les items sont liés aux catégories via une relation ManyToOne

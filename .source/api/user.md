@@ -48,17 +48,14 @@ Cette route permet de créer un nouveau client dans le système. Un client est u
 
 #### Erreurs possibles
 
-**400 Bad Request** - Données manquantes ou validation échouée
-```json
-{
-  "error": "Email, password and name are required"
-}
-```
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
 
-**400 Bad Request** - Erreur de validation
+**400 Bad Request** - Erreur de validation (données manquantes, validation échouée)
 ```json
 {
-  "error": "Validation failed",
+  "code": 400,
+  "error": "Validation Error",
+  "message": "Les données fournies ne sont pas valides",
   "details": [
     "email: This value is not a valid email address.",
     "name: This value should not be blank."
@@ -69,7 +66,9 @@ Cette route permet de créer un nouveau client dans le système. Un client est u
 **409 Conflict** - Email déjà utilisé
 ```json
 {
-  "error": "User with this email already exists"
+  "code": 409,
+  "error": "Conflict",
+  "message": "User with this email already exists"
 }
 ```
 
@@ -185,6 +184,6 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
 - **Format des réponses** : Toutes les réponses sont au format JSON
 - **Content-Type** : Les requêtes doivent avoir l'en-tête `Content-Type: application/json`
 - **Base URL** : Les routes sont accessibles depuis la base URL configurée (ex: `http://localhost:8000`)
-- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON cohérent avec un champ `error` ou `message`
+- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON uniformisé. Voir [error-responses.md](error-responses.md) pour plus de détails
 - **Validation** : Les validations sont effectuées à la fois au niveau du contrôleur et au niveau de l'entité via les validators Symfony
 

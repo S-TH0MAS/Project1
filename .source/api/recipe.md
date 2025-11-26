@@ -83,17 +83,26 @@ Content-Type: application/json
 
 #### Erreurs possibles
 
-**400 Bad Request** - Prompt manquant ou vide
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
+
+**400 Bad Request** - Erreur de validation (prompt manquant ou vide)
 ```json
 {
-  "error": "Prompt is required"
+  "code": 400,
+  "error": "Validation Error",
+  "message": "Les données fournies ne sont pas valides",
+  "details": [
+    "prompt: This value should not be blank."
+  ]
 }
 ```
 
 **400 Bad Request** - Inventaire vide
 ```json
 {
-  "error": "No ingredients available in inventory"
+  "code": 400,
+  "error": "Bad Request",
+  "message": "No ingredients available in inventory"
 }
 ```
 
@@ -116,15 +125,21 @@ Content-Type: application/json
 **403 Forbidden** - L'utilisateur n'est pas un Client
 ```json
 {
-  "error": "User must be a client"
+  "code": 403,
+  "error": "Forbidden",
+  "message": "User must be a client"
 }
 ```
 
 **500 Internal Server Error** - Erreur lors de l'appel à Gemini
 ```json
 {
-  "error": "Failed to generate recipe",
-  "message": "Empty response from Gemini"
+  "code": 500,
+  "error": "Internal Server Error",
+  "message": "Failed to generate recipe",
+  "details": {
+    "message": "Empty response from Gemini"
+  }
 }
 ```
 
@@ -260,7 +275,7 @@ curl -X POST http://localhost:8000/api/generate_recipes \
 - **Format des réponses** : Toutes les réponses sont au format JSON
 - **Content-Type** : Les requêtes doivent avoir l'en-tête `Content-Type: application/json`
 - **Base URL** : Les routes sont accessibles depuis la base URL configurée (ex: `http://localhost:8000`)
-- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON cohérent avec un champ `error` ou `message`
+- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON uniformisé. Voir [error-responses.md](error-responses.md) pour plus de détails
 - **Dépendances externes** : Cette route dépend de l'API Gemini qui doit être accessible et correctement configurée
 - **Configuration requise** : 
   - Variable d'environnement `GEMINI_KEY` doit être définie

@@ -71,6 +71,8 @@ Si aucune catégorie n'existe dans le système, la réponse sera :
 
 #### Erreurs possibles
 
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
+
 **401 Unauthorized** - Token manquant ou invalide
 ```json
 {
@@ -163,7 +165,7 @@ curl -X GET http://localhost:8000/api/categories \
 - **Format des réponses** : Toutes les réponses sont au format JSON
 - **Content-Type** : Les requêtes doivent avoir l'en-tête `Content-Type: application/json`
 - **Base URL** : Les routes sont accessibles depuis la base URL configurée (ex: `http://localhost:8000`)
-- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON cohérent avec un champ `code` et `message`
+- **Gestion des erreurs** : Toutes les erreurs suivent un format JSON uniformisé. Voir [error-responses.md](error-responses.md) pour plus de détails
 - **Performance** : La route retourne toutes les catégories en une seule requête. Pour de grandes quantités de données, une pagination pourrait être ajoutée dans le futur
 - **Relations** : Les catégories sont liées aux items via une relation OneToMany. Les items ne sont pas inclus dans cette réponse pour des raisons de performance
 
