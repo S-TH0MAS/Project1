@@ -1,121 +1,124 @@
-# 🛠️ RequestValidator Service
+# 🛠️ RequestValidator Service (Mode DTO)
 
-Ce service permet de **simplifier** et **centraliser** la validation des données entrantes (généralement issues du **body JSON** d'une requête API) en utilisant le composant **Validator** natif de Symfony.
-
-Il remplace les multiples `if (empty($data['field']))` par une **définition déclarative**, claire et robuste.
+Ce service permet de transformer automatiquement le JSON d'une requête en Objet PHP (DTO) **et de le valider en une seule étape**, en combinant **Serializer** et **Validator** de Symfony.
 
 ---
 
-## ⚙️ Installation / Configuration
+## ⚙️ Pourquoi utiliser cette approche ?
 
-Le service est **autoconfiguré par Symfony**. Il suffit de l'injecter dans vos contrôleurs ou autres services.
-
-**Namespace :** `App\Service\Validator\RequestValidator`
+* **Sécurité des types** : Le JSON est converti en objets typés (int, string, etc.).
+* **Autocomplétion** : Votre IDE connaît les propriétés du DTO.
+* **Propreté du code** : Règles dans le DTO, pas dans le contrôleur.
+* **Erreurs détaillées** : Retour structurée pour le front.
 
 ---
 
-## 🚀 Utilisation de base
+## 🚀 Guide d'Utilisation
 
-### 1. Injection de dépendance
+### 🔹 Étape 1 : Créer un DTO
 
-Dans votre contrôleur :
+```php
+namespace App\DTO;
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+class AddInventoryDto
+{
+    #[Assert\NotBlank(message: "L'ID est obligatoire")]
+    #[Assert\Type('integer')]
+    public int $itemId;
+
+    #[Assert\NotBlank]
+    #[Assert\Positive(message: "La quantité doit être positive")]
+    public int $quantity;
+
+    #[Assert\Length(min: 3)]
+    public ?string $comment = null;
+}
+```
+
+---
+
+### 🔹 Étape 2 : Utiliser dans le Contrôleur
 
 ```php
 use App\Service\Validator\RequestValidator;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\DTO\AddInventoryDto;
+use App\Exception\ValidationException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
-public function maMethode(RequestValidator $validator)
+public function add(Request $request, RequestValidator $validator): JsonResponse
 {
-    // ...
-}
-```
+    try {
+        /** @var AddInventoryDto $dto */
+        $dto = $validator->validate($request->getContent(), AddInventoryDto::class);
 
-### 2. Validation des données
+    } catch (ValidationException $e) {
+        return new JsonResponse([
+            'error' => 'Erreur de validation',
+            'message' => $e->getMessage(),
+            'details' => $e->getDetails()
+        ], 400);
 
-La méthode `check()` prend deux arguments :
+    } catch (\Exception $e) {
+        return new JsonResponse([
+            'error' => 'Bad Request',
+            'message' => $e->getMessage()
+        ], 400);
+    }
 
-* Les **données à valider** (tableau associatif)
-* Le **schéma de validation** (tableau de contraintes)
+    $newItem = new Item();
+    $newItem->setId($dto->itemId);
+    $newItem->setStock($dto->quantity);
 
-Si la validation échoue, une **Exception est levée** avec un message d'erreur formaté.
-
-```php
-// Récupération des données
-$data = json_decode($request->getContent(), true) ?? [];
-
-// Définition du schéma
-$constraints = [
-    'email' => [
-        new Assert\NotBlank(['message' => 'Email requis']),
-        new Assert\Email(['message' => 'Format email invalide'])
-    ],
-    'age' => [
-        new Assert\NotBlank(),
-        new Assert\Type(['type' => 'integer']),
-        new Assert\GreaterThan(['value' => 18])
-    ]
-];
-
-try {
-    // Validation
-    $validator->check($data, $constraints);
-
-    // Si on arrive ici, $data est valide !
-    $email = $data['email'];
-
-} catch (\Exception $e) {
-    return new JsonResponse([
-        'error' => 'Erreur de validation',
-        'message' => $e->getMessage() // ex: "email: Format email invalide, age: Cette valeur doit être supérieure à 18."
-    ], Response::HTTP_BAD_REQUEST);
+    // ... suite de la logique ...
 }
 ```
 
 ---
 
-## 📚 Exemples de Contraintes Utiles
+## 📡 Format de Réponse d'Erreur
 
-| Type      | Contrainte                                     | Description                              |
-| --------- | ---------------------------------------------- | ---------------------------------------- |
-| Requis    | `new Assert\NotBlank()`                        | Champ obligatoire, non vide              |
-| Type      | `new Assert\Type(['type' => 'integer'])`       | Vérifie le type attendu                  |
-| Nombre    | `new Assert\Positive()`                        | Doit être strictement supérieur à 0      |
-| Nombre    | `new Assert\Range(['min' => 1, 'max' => 5])`   | Doit être compris entre `min` et `max`   |
-| Texte     | `new Assert\Length(['min' => 3])`              | Longueur minimale                        |
-| Choix     | `new Assert\Choice(['choices' => ['A', 'B']])` | Valeur autorisée dans une liste          |
-| Format    | `new Assert\Email()`                           | Email valide                             |
-| Optionnel | `new Assert\Optional([...])`                   | Valide seulement si le champ est présent |
-
----
-
-## 💡 Astuces
-
-### ✔️ Champs optionnels vs Champs ignorés
-
-* **Champs ignorés** : Par défaut, le service accepte les champs *supplémentaires* non définis dans le schéma (`allowExtraFields: true`).
-* **Champs optionnels** : Pour valider un champ seulement s'il est présent :
-
-```php
-'telephone' => new Assert\Optional([
-    new Assert\Type(['type' => 'string']),
-    new Assert\Length(['min' => 10])
-]),
-```
-
-### ✔️ Validation d'IDs (Foreign Keys)
-
-Pour valider qu'un ID est bien un entier positif avant même une recherche en base :
-
-```php
-'itemId' => [
-    new Assert\NotBlank(),
-    new Assert\Type(['type' => 'integer']),
-    new Assert\Positive()
-],
+```json
+{
+    "error": "Erreur de validation",
+    "message": "Erreur de validation des données",
+    "details": {
+        "itemId": "L'ID doit être un entier.",
+        "quantity": "La quantité doit être positive."
+    }
+}
 ```
 
 ---
 
-## 🎉 Conclusion
+## 📚 Traduction : Tableaux vs Attributs
 
-Avec le **RequestValidator**, vos contrôleurs deviennent plus propres, plus sûrs et plus lisibles. Une seule ligne pour valider une structure complexe : simple et efficace !
+| Type     | Ancienne syntaxe                         | Nouvelle syntaxe (Attribut DTO)       |
+| -------- | ---------------------------------------- | ------------------------------------- |
+| Requis   | new Assert\NotBlank()                    | #[Assert\NotBlank]                    |
+| Type     | new Assert\Type(['type' => 'int'])       | #[Assert\Type('integer')]             |
+| Email    | new Assert\Email()                       | #[Assert\Email]                       |
+| Nombre   | new Assert\Positive()                    | #[Assert\Positive]                    |
+| Longueur | new Assert\Length(['min' => 3])          | #[Assert\Length(min: 3)]              |
+| Choix    | new Assert\Choice(['choices' => ['A']])  | #[Assert\Choice(choices: ['A', 'B'])] |
+| Regex    | new Assert\Regex(['pattern' => '/.../']) | #[Assert\Regex('/.../')]              |
+| Imbriqué | new Assert\Valid()                       | #[Assert\Valid]                       |
+
+---
+
+## 💡 Astuces & Fonctionnement interne
+
+### ✔️ 1. Gestion des Types
+
+Le Serializer convertit les valeurs avant même la validation. Si un champ typé `int` reçoit une string invalide → **erreur immédiate**.
+
+### ✔️ 2. Objets Imbriqués
+
+```php
+class OrderDto {
+    #[Assert\Valid]
+    public AddressDto $address;
+}
+```

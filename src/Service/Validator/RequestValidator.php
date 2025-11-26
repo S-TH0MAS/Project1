@@ -2,7 +2,8 @@
 
 namespace App\Service\Validator;
 
-use Symfony\Component\Validator\Constraints\Collection;
+use App\Exception\ValidationException; // Importez votre nouvelle exception
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Exception;
@@ -10,51 +11,63 @@ use Exception;
 class RequestValidator
 {
     private ValidatorInterface $validator;
+    private SerializerInterface $serializer;
 
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator, SerializerInterface $serializer)
     {
         $this->validator = $validator;
+        $this->serializer = $serializer;
     }
 
     /**
-     * Valide les données par rapport à une collection de contraintes.
-     *
-     * @param array $data Les données à valider (généralement le json_decode du body)
-     * @param array $constraints Un tableau associatif ['champ' => [Contraintes...]]
-     * * @return array Les données validées (identiques à l'entrée, pratique pour le chaînage)
-     * @throws Exception Si la validation échoue
+     * @template T
+     * @param string $jsonContent
+     * @param class-string<T> $dtoClass
+     * @return T
+     * @throws Exception
      */
-    public function check(array $data, array $constraints): array
+    public function validate(string $jsonContent, string $dtoClass)
     {
-        // On utilise la contrainte "Collection" de Symfony pour valider un tableau associatif
-        // allowExtraFields: true permet d'ignorer les champs non spécifiés dans le schéma
-        // allowExtraFields: false (défaut) renverrait une erreur si un champ inconnu est envoyé
-        $collectionConstraint = new Collection([
-            'fields' => $constraints,
-            'allowExtraFields' => true,
-            'missingFieldsMessage' => 'Le champ {{ field }} est manquant.',
-        ]);
-
-        $violations = $this->validator->validate($data, $collectionConstraint);
-
-        if (count($violations) > 0) {
-            $errorMessage = $this->formatErrors($violations);
-            throw new Exception($errorMessage);
+        // 1. Désérialisation
+        try {
+            $dto = $this->serializer->deserialize($jsonContent, $dtoClass, 'json');
+        } catch (\Throwable $e) {
+            // Ici, c'est une erreur de format JSON, on renvoie une erreur globale
+            throw new Exception("Format de données invalide : " . $e->getMessage());
         }
 
-        return $data;
+        // 2. Validation
+        $violations = $this->validator->validate($dto);
+
+        if (count($violations) > 0) {
+            // On récupère les erreurs sous forme de tableau structuré
+            $errors = $this->formatErrors($violations);
+
+            // On lance notre exception personnalisée avec les détails
+            throw new ValidationException($errors, "Erreur de validation des données");
+        }
+
+        return $dto;
     }
 
-    private function formatErrors(ConstraintViolationListInterface $violations): string
+    /**
+     * Retourne un tableau associatif [champ => message]
+     */
+    private function formatErrors(ConstraintViolationListInterface $violations): array
     {
         $errors = [];
         foreach ($violations as $violation) {
-            // Format: "nom_du_champ: Le message d'erreur"
-            // On nettoie le chemin de la propriété (ex: "[itemId]" devient "itemId")
-            $field = str_replace(['[', ']'], '', $violation->getPropertyPath());
-            $errors[] = sprintf('%s: %s', $field, $violation->getMessage());
-        }
+            $field = $violation->getPropertyPath();
+            $message = $violation->getMessage();
 
-        return implode(', ', $errors);
+            // Si plusieurs erreurs sur le même champ, on peut concaténer ou garder la dernière
+            // Ici, exemple simple : on écrase ou on crée
+            if (isset($errors[$field])) {
+                $errors[$field] .= ' ' . $message;
+            } else {
+                $errors[$field] = $message;
+            }
+        }
+        return $errors;
     }
 }
