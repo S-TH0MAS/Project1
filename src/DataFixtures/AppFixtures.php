@@ -58,20 +58,27 @@ class AppFixtures extends Fixture
             }
         }
 
-        // 3. Création du User (Client) "test@test.mail"
+        // 3.a Création du User (Client) "test@test.mail"
         $client = new Client();
         $client->setEmail('test@test.mail');
         $client->setName('Utilisateur Test');
         $client->setRoles(['ROLE_USER']);
-
-        // Hashage du mot de passe "azer1234"
-        $password = $this->hasher->hashPassword($client, 'azer1234');
-        $client->setPassword($password);
+        $client->setPassword($this->hasher->hashPassword($client, 'azer1234'));
 
         $manager->persist($client);
 
-        // 4. Création d'Items Personnalisés (ClientItem)
-        // Note : Un ClientItem hérite de Item, il lui faut donc aussi une catégorie.
+        // 3.b Création de l'ADMIN "admin@admin.mail"
+        $admin = new Client();
+        $admin->setEmail('admin@admin.mail');
+        $admin->setName('admin');
+        // On lui donne le rôle ADMIN en plus du rôle USER
+        $admin->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
+        $admin->setPassword($this->hasher->hashPassword($admin, 'azer1234'));
+
+        $manager->persist($admin);
+
+
+        // 4. Création d'Items Personnalisés (ClientItem) pour le client "Test"
         $customItemsData = [
             ['name' => 'Ma Confiture Maison de fraise', 'cat' => 'Sucres & Pâtisserie'],
             ['name' => 'Reste de Pizza Jambon fromage', 'cat' => 'Céréales & Féculents'],
@@ -81,28 +88,24 @@ class AppFixtures extends Fixture
         foreach ($customItemsData as $data) {
             $clientItem = new ClientItem();
             $clientItem->setName($data['name']);
-            $clientItem->setClient($client); // Liaison au client (créateur)
+            $clientItem->setClient($client);
 
-            // On assigne la catégorie correspondante (obligatoire via l'héritage Item)
             if (isset($allCategories[$data['cat']])) {
                 $clientItem->setCategory($allCategories[$data['cat']]);
             } else {
-                // Fallback si la catégorie n'est pas trouvée (ne devrait pas arriver ici)
                 $clientItem->setCategory(array_values($allCategories)[0]);
             }
 
             $manager->persist($clientItem);
 
-            // OPTIONNEL : Ajouter directement ce Custom Item à l'inventaire du client
             $inv = new Inventory();
             $inv->setClient($client);
             $inv->setItem($clientItem);
-            $inv->setQuantity(1); // Il en a 1
+            $inv->setQuantity(1);
             $manager->persist($inv);
         }
 
-        // 5. Remplir l'inventaire du client avec des items génériques
-        // On prend 15 items au hasard dans la liste globale
+        // 5. Remplir l'inventaire du client "Test" avec des items génériques
         shuffle($allGenericItems);
         $itemsForInventory = array_slice($allGenericItems, 0, 15);
 
@@ -110,8 +113,6 @@ class AppFixtures extends Fixture
             $inventory = new Inventory();
             $inventory->setClient($client);
             $inventory->setItem($genericItem);
-
-            // Quantité aléatoire entre 1 et 10
             $inventory->setQuantity(mt_rand(1, 10));
 
             $manager->persist($inventory);
