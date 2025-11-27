@@ -21,6 +21,11 @@ Ce dossier contient la documentation complète pour toutes les routes liées aux
    - Les recettes sont triées par ID croissant pour tous les modes
    - **Optimisations** : Pagination au niveau SQL et préchargement des auteurs pour éviter le problème N+1
 
+4. **[Suppression de recette](delete.md)** - `DELETE /api/recipe/{id}`
+   - Supprime une recette sauvegardée
+   - Seul l'auteur de la recette peut la supprimer
+   - La suppression est définitive et ne peut pas être annulée
+
 ## Notes générales
 
 - **Format des réponses** : Toutes les réponses sont au format JSON
@@ -40,6 +45,7 @@ Ce dossier contient la documentation complète pour toutes les routes liées aux
 4. **Consulter les favoris** : Utilisez `POST /api/recipe/get` avec `{"quantity": 10, "mode": "favorite"}` pour voir vos recettes favorites
 5. **Consulter vos recettes** : Utilisez `POST /api/recipe/get` avec `{"quantity": 10, "mode": "author"}` pour voir les recettes dont vous êtes l'auteur
 6. **Parcourir les recettes** : Utilisez `POST /api/recipe/get` pour récupérer une liste paginée de toutes les recettes
+7. **Supprimer une recette** : Utilisez `DELETE /api/recipe/{id}` pour supprimer une recette dont vous êtes l'auteur
 
 ## Authentification
 

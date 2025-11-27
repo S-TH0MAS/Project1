@@ -7,6 +7,7 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
 - **generate-recipes.http** : Tests pour générer une recette (`POST /api/recipe/generate`)
 - **save-recipe.http** : Tests pour sauvegarder une recette (`POST /api/recipe/save`)
 - **recipe-get.http** : Tests pour récupérer des recettes (`POST /api/recipe/get`) - inclut les recettes favorites
+- **delete-recipe.http** : Tests pour supprimer une recette (`DELETE /api/recipe/{id}`)
 
 ## Utilisation dans PHPStorm
 
@@ -47,7 +48,11 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
    - Utilisez la route `POST /api/inventories/add` (voir `../inventory/add-inventory.http`) pour ajouter des items à votre inventaire
    - La route nécessite au moins un item dans l'inventaire pour fonctionner
 
-4. **Configuration Gemini** (pour `/api/recipe/generate`) :
+4. **Avoir une recette sauvegardée** (pour `/api/recipe/{id}`) :
+   - Utilisez les routes `POST /api/recipe/generate` et `POST /api/recipe/save` pour créer une recette
+   - La recette doit être créée par le client connecté pour pouvoir être supprimée
+
+5. **Configuration Gemini** (pour `/api/recipe/generate`) :
    - La clé API Gemini doit être configurée dans le fichier `.env` avec la variable `GEMINI_KEY`
    - Voir `../../.source/env/README.md` pour plus d'informations
 
@@ -139,6 +144,13 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
 | `offset` | integer | Non | Nombre de recettes à ignorer avant de commencer à récupérer (doit être >= 0, défaut: 0) |
 | `mode` | string | Non | Mode de récupération : `all` (toutes les recettes), `favorite` (recettes favorites du client), ou `author` (recettes dont le client est l'auteur). Défaut: `all` |
 
+### DELETE /api/recipe/{id}
+
+#### Path Parameters
+| Paramètre | Type | Requis | Description |
+|-----------|------|--------|-------------|
+| `id` | integer | Oui | Identifiant unique de la recette à supprimer |
+
 ## Notes importantes
 
 ### Génération de recette (POST /api/recipe/generate)
@@ -182,6 +194,13 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
   - `{"quantity": 10, "offset": 5, "mode": "favorite"}` : Récupère 10 recettes favorites à partir de l'offset 5
   - `{"quantity": 10, "mode": "author"}` : Récupère les 10 premières recettes dont le client est l'auteur
 
+### Suppression de recette (DELETE /api/recipe/{id})
+- Cette route est **protégée** et nécessite une authentification JWT
+- **Autorisation** : Seul l'auteur de la recette peut la supprimer
+- **Suppression définitive** : La suppression est définitive et ne peut pas être annulée
+- **Favoris** : Si la recette était dans les favoris d'autres utilisateurs, elle sera automatiquement retirée (cascade Doctrine)
+- **Exemple d'utilisation** :
+  - `DELETE /api/recipe/1` : Supprime la recette avec l'ID 1 (si vous en êtes l'auteur)
 
 ## Variables d'environnement
 
