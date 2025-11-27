@@ -2,6 +2,7 @@
 
 namespace App\Controller\ApiController;
 
+use App\Controller\Abstract\AbstractItemController;
 use App\Entity\Client;
 use App\Entity\ClientItem;
 use App\Entity\Item;

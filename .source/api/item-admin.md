@@ -467,3 +467,4 @@ Cette route permet à un administrateur de supprimer un item global. L'image ass
   - Les admins ne peuvent pas modifier ou supprimer les `ClientItem`
   - Les clients ne peuvent pas modifier ou supprimer les `Item` globaux
 
+

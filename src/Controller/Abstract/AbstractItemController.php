@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\ApiController;
+namespace App\Controller\Abstract;
 
 use App\DTO\Api\Item\AddItemDto;
 use App\DTO\Api\Item\UpdateItemDto;

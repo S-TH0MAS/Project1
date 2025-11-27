@@ -2,7 +2,7 @@
 
 namespace App\Controller\ApiController\Admin;
 
-use App\Controller\ApiController\AbstractItemController;
+use App\Controller\Abstract\AbstractItemController;
 use App\Entity\ClientItem;
 use App\Entity\Item;
 use App\Repository\CategoryRepository;

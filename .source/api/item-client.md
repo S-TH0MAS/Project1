@@ -460,3 +460,4 @@ Cette route permet à un client de supprimer un de ses items personnalisés. L'i
   - `POST /api/items/add` : Crée un nouvel item personnalisé pour le client
   - `POST /api/inventories/add` : Ajoute une quantité d'un item existant à l'inventaire du client
 
+
