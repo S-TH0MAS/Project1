@@ -8,6 +8,7 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
 - **save-recipe.http** : Tests pour sauvegarder une recette (`POST /api/recipe/save`)
 - **recipe-get.http** : Tests pour récupérer des recettes (`POST /api/recipe/get`) - inclut les recettes favorites
 - **delete-recipe.http** : Tests pour supprimer une recette (`DELETE /api/recipe/{id}`)
+- **favorite-recipe.http** : Tests pour ajouter/retirer des recettes des favoris (`GET /api/recipe/favorite/add/{id}` et `GET /api/recipe/favorite/remove/{id}`)
 
 ## Utilisation dans PHPStorm
 
@@ -151,6 +152,13 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
 |-----------|------|--------|-------------|
 | `id` | integer | Oui | Identifiant unique de la recette à supprimer |
 
+### GET /api/recipe/favorite/add/{id} et GET /api/recipe/favorite/remove/{id}
+
+#### Path Parameters
+| Paramètre | Type | Requis | Description |
+|-----------|------|--------|-------------|
+| `id` | integer | Oui | Identifiant unique de la recette à ajouter ou retirer des favoris |
+
 ## Notes importantes
 
 ### Génération de recette (POST /api/recipe/generate)
@@ -201,6 +209,15 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
 - **Favoris** : Si la recette était dans les favoris d'autres utilisateurs, elle sera automatiquement retirée (cascade Doctrine)
 - **Exemple d'utilisation** :
   - `DELETE /api/recipe/1` : Supprime la recette avec l'ID 1 (si vous en êtes l'auteur)
+
+### Gestion des favoris (GET /api/recipe/favorite/add/{id} et GET /api/recipe/favorite/remove/{id})
+- Ces routes sont **protégées** et nécessitent une authentification JWT
+- **Client requis** : L'utilisateur connecté doit être une instance de `Client`
+- **Ajout** : `GET /api/recipe/favorite/add/{id}` ajoute une recette aux favoris (retourne 400 si déjà en favoris)
+- **Retrait** : `GET /api/recipe/favorite/remove/{id}` retire une recette des favoris (retourne 400 si non en favoris)
+- **Exemples d'utilisation** :
+  - `GET /api/recipe/favorite/add/1` : Ajoute la recette avec l'ID 1 aux favoris
+  - `GET /api/recipe/favorite/remove/1` : Retire la recette avec l'ID 1 des favoris
 
 ## Variables d'environnement
 

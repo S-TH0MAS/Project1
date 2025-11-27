@@ -26,6 +26,11 @@ Ce dossier contient la documentation complète pour toutes les routes liées aux
    - Seul l'auteur de la recette peut la supprimer
    - La suppression est définitive et ne peut pas être annulée
 
+5. **[Gestion des favoris](favorite.md)** - `GET /api/recipe/favorite/add/{id}` et `GET /api/recipe/favorite/remove/{id}`
+   - Ajoute ou retire une recette des favoris du client connecté
+   - Vérifie automatiquement si la recette est déjà en favoris ou non
+   - Gère les erreurs de duplication et d'absence
+
 ## Notes générales
 
 - **Format des réponses** : Toutes les réponses sont au format JSON
@@ -46,6 +51,7 @@ Ce dossier contient la documentation complète pour toutes les routes liées aux
 5. **Consulter vos recettes** : Utilisez `POST /api/recipe/get` avec `{"quantity": 10, "mode": "author"}` pour voir les recettes dont vous êtes l'auteur
 6. **Parcourir les recettes** : Utilisez `POST /api/recipe/get` pour récupérer une liste paginée de toutes les recettes
 7. **Supprimer une recette** : Utilisez `DELETE /api/recipe/{id}` pour supprimer une recette dont vous êtes l'auteur
+8. **Gérer les favoris** : Utilisez `GET /api/recipe/favorite/add/{id}` pour ajouter une recette aux favoris et `GET /api/recipe/favorite/remove/{id}` pour la retirer
 
 ## Authentification
 

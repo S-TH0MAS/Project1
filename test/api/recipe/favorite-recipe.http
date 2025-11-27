@@ -1,0 +1,39 @@
+### Variables
+@baseUrl = http://localhost:8000
+@contentType = application/json
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQwNTIxODQsImV4cCI6MTc2NDA1NTc4NCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.bAlhVOc9RhJJwRjD5CtDKVRp4bT1nnt9y0oJIm5BGmgaa5Ybh9xBlOKVvfjDbgCdIIF8ZCnlQ4mKmng3fkamBWZMPotc_gw9A5sjM8hLsbdTa1gq-lPTtFyKSog2fjBFmYiletRyAXoi-EiIqq-kg-_7CWZ3nM5_d9Ta_-bCZqCF3PND4Z405S5PuXOjSIGaGYGbK_sACvpUDKUO1I41QmGxXuu1kWoLbu6BQymn0dvghUzcDzAp9gOT1mY4CNnWpw3GWnBA2lXh2J0JqO63hVPwYVi99jvHuH5OsUUkFfnTuOwghFEvhaMD9wqBMox2_V92iM5NdTxZ-Mu2HUawiA
+
+### IMPORTANT: Ces routes ajoutent/retirent des recettes des favoris
+### Assurez-vous d'avoir des recettes en base (via /recipe/save ou fixtures)
+
+### Ajouter une recette aux favoris (remplacez {id} par l'ID d'une recette)
+GET {{baseUrl}}/api/recipe/favorite/add/1
+Authorization: Bearer {{token}}
+
+### Retirer une recette des favoris (remplacez {id} par l'ID d'une recette)
+GET {{baseUrl}}/api/recipe/favorite/remove/2
+Authorization: Bearer {{token}}
+
+### Test avec ID invalide - Ajouter (devrait retourner 400)
+GET {{baseUrl}}/api/recipe/favorite/add/abc
+Authorization: Bearer {{token}}
+
+### Test avec recette inexistante - Ajouter (devrait retourner 404)
+GET {{baseUrl}}/api/recipe/favorite/add/99999
+Authorization: Bearer {{token}}
+
+### Test avec recette déjà en favoris - Ajouter (devrait retourner 400)
+GET {{baseUrl}}/api/recipe/favorite/add/1
+Authorization: Bearer {{token}}
+
+### Test avec recette non en favoris - Retirer (devrait retourner 400)
+GET {{baseUrl}}/api/recipe/favorite/remove/2
+Authorization: Bearer {{token}}
+
+### Test sans token - Ajouter (devrait retourner 401)
+GET {{baseUrl}}/api/recipe/favorite/add/2
+
+### Test avec token invalide - Ajouter (devrait retourner 401)
+GET {{baseUrl}}/api/recipe/favorite/add/1
+Authorization: Bearer invalid_token_here
+
