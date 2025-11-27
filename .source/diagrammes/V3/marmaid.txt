@@ -1,0 +1,56 @@
+classDiagram
+    %% Définition des classes
+    class User {
+        +id: int
+        +email: string
+        +password: string
+        +role: string
+    }
+
+    class Client {
+        +name: string
+    }
+
+    class Category {
+        +id: int
+        +name: string
+    }
+
+    class Inventory {
+        +id: int
+        +quantity: int
+    }
+
+    class Item {
+        +id: int
+        +name: string
+        +category_id: int
+        +img: string
+    }
+
+    class ClientItem {
+        +clientId: int
+        %% Hérite des propriétés de Item + attributs spécifiques si nécessaire
+    }
+
+    class Recipe {
+        +id: int
+        +name: string
+        +matching: int
+        +preparation_time: int
+        +ingredients: string[]
+        +steps: string[]
+    }
+
+    %% Relations d'héritage
+    User <|-- Client
+    Item <|-- ClientItem
+
+    %% Relations existantes
+    Client "1" -- "0..*" Inventory : possède
+    Category "1" -- "0..*" Item : contient
+    Inventory "0..*" --> Item : référence
+
+    %% Relations ajoutées récemment
+    Client "*" -- "*" Recipe : a pour favoris
+    Client "1" -- "0..*" ClientItem : crée
