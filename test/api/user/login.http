@@ -11,7 +11,7 @@ POST {{baseUrl}}/user/login
 Content-Type: {{contentType}}
 
 {
-  "email": "test@test.mail",
+  "email": "admin@admin.mail",
   "password": "azer1234"
 }
 

@@ -1,0 +1,151 @@
+### Variables
+@baseUrl = http://localhost:8000
+@adminToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQyMjEyMTEsImV4cCI6MTc2NDIyNDgxMSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQGFkbWluLm1haWwifQ.UY1tlNm4czHF1sk8lXSwSHmh7seIixlWjUVhBE2AO_yekEh-2vSIXYhaBj8Ee8hvHkkgQ0zB0gp-7DbqVJHZTfJb5qPWPoWTL-8vupnPlcsDN_uzZT6XxPUqt_-TzVMlAiu3T9pid4GF4lxBqZebKD296Z4G-gq-vtSG9KeGiWRiOocWYuJ-2MXObvWkyewuKdN8Qr_7MqKa7gygt8SUITtaAnT8FxvCTIlxhNjF7eRnJrq-w_LDGt-tr7VMNnWc0qBc01KR3nlqoAQNi5Z0D7DXSgE4xawtG7xoaJ6puUQm5YrYs7l51f9YqREhuarDcVhfei4TerYhTGBlsxW30Q
+@categoryId = 21
+
+### IMPORTANT: Obtenez d'abord un token ADMIN via POST /user/login
+### Remplacez {{adminToken}} ci-dessous par le token obtenu d'un utilisateur avec ROLE_ADMIN
+### IMPORTANT: Remplacez {{categoryId}} par l'ID d'une catégorie existante
+
+### ------------------------------------------------------------------------
+### POST /api/admin/category/add - CRÉER UNE CATÉGORIE
+### ------------------------------------------------------------------------
+
+### 1. Créer une nouvelle catégorie
+POST {{baseUrl}}/api/admin/category/add
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Nouvelle Catégorie"
+}
+
+### 2. Créer une autre catégorie
+POST {{baseUrl}}/api/admin/category/add
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Catégorie Test"
+}
+
+### ------------------------------------------------------------------------
+### PATCH /api/admin/category/update/{id} - METTRE À JOUR UNE CATÉGORIE
+### ------------------------------------------------------------------------
+
+### 3. Mettre à jour le nom d'une catégorie
+PATCH {{baseUrl}}/api/admin/category/update/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Catégorie Modifiée"
+}
+
+### 4. Mettre à jour avec un nom vide (devrait échouer)
+PATCH {{baseUrl}}/api/admin/category/update/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+### ------------------------------------------------------------------------
+### DELETE /api/admin/category/delete/{id} - SUPPRIMER UNE CATÉGORIE
+### ------------------------------------------------------------------------
+
+### 5. Supprimer une catégorie
+DELETE {{baseUrl}}/api/admin/category/delete/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - POST
+### ------------------------------------------------------------------------
+
+### 6. Erreur : Name manquant
+POST {{baseUrl}}/api/admin/category/add
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{}
+
+### 7. Erreur : Name vide
+POST {{baseUrl}}/api/admin/category/add
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+### 8. Erreur : Name trop long (> 255 caractères)
+POST {{baseUrl}}/api/admin/category/add
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+}
+
+### 9. Erreur : Catégorie avec le même nom existe déjà
+POST {{baseUrl}}/api/admin/category/add
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Fruits"
+}
+
+### 10. Erreur : Utilisateur non admin (403 Forbidden)
+POST {{baseUrl}}/api/admin/category/add
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Tentative Non Admin"
+}
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - PATCH
+### ------------------------------------------------------------------------
+
+### 11. Erreur : Catégorie inexistante
+PATCH {{baseUrl}}/api/admin/category/update/99999
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Catégorie Inexistante"
+}
+
+### 12. Erreur : Catégorie avec le même nom existe déjà
+PATCH {{baseUrl}}/api/admin/category/update/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Fruits"
+}
+
+### 13. Erreur : JSON invalide
+PATCH {{baseUrl}}/api/admin/category/update/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Broken JSON...
+}
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - DELETE
+### ------------------------------------------------------------------------
+
+### 14. Erreur : Catégorie inexistante
+DELETE {{baseUrl}}/api/admin/category/delete/99999
+Authorization: Bearer {{adminToken}}
+
+### 15. Erreur : Catégorie avec des items associés (ne peut pas être supprimée)
+DELETE {{baseUrl}}/api/admin/category/delete/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+

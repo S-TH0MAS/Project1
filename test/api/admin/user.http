@@ -1,0 +1,59 @@
+### Variables
+@baseUrl = http://localhost:8000
+@adminToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQyMjEyMTEsImV4cCI6MTc2NDIyNDgxMSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQGFkbWluLm1haWwifQ.UY1tlNm4czHF1sk8lXSwSHmh7seIixlWjUVhBE2AO_yekEh-2vSIXYhaBj8Ee8hvHkkgQ0zB0gp-7DbqVJHZTfJb5qPWPoWTL-8vupnPlcsDN_uzZT6XxPUqt_-TzVMlAiu3T9pid4GF4lxBqZebKD296Z4G-gq-vtSG9KeGiWRiOocWYuJ-2MXObvWkyewuKdN8Qr_7MqKa7gygt8SUITtaAnT8FxvCTIlxhNjF7eRnJrq-w_LDGt-tr7VMNnWc0qBc01KR3nlqoAQNi5Z0D7DXSgE4xawtG7xoaJ6puUQm5YrYs7l51f9YqREhuarDcVhfei4TerYhTGBlsxW30Q
+@userId = 1
+
+### IMPORTANT: Obtenez d'abord un token ADMIN via POST /user/login
+### Remplacez {{adminToken}} ci-dessous par le token obtenu d'un utilisateur avec ROLE_ADMIN
+### IMPORTANT: Remplacez {{userId}} par l'ID d'un utilisateur existant (pas votre propre ID)
+
+### ------------------------------------------------------------------------
+### GET /api/admin/user - LISTER TOUS LES UTILISATEURS
+### ------------------------------------------------------------------------
+
+### 1. Lister tous les utilisateurs
+GET {{baseUrl}}/api/admin/user
+Authorization: Bearer {{adminToken}}
+
+### 2. Lister tous les utilisateurs (test avec token non-admin - devrait échouer)
+GET {{baseUrl}}/api/admin/user
+Authorization: Bearer {{adminToken}}
+
+### ------------------------------------------------------------------------
+### DELETE /api/admin/user/delete/{id} - SUPPRIMER UN UTILISATEUR
+### ------------------------------------------------------------------------
+
+### 3. Supprimer un utilisateur
+DELETE {{baseUrl}}/api/admin/user/delete/{{userId}}
+Authorization: Bearer {{adminToken}}
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - GET
+### ------------------------------------------------------------------------
+
+### 4. Erreur : Token manquant (401 Unauthorized)
+GET {{baseUrl}}/api/admin/user
+
+### 5. Erreur : Utilisateur non admin (403 Forbidden)
+GET {{baseUrl}}/api/admin/user
+Authorization: Bearer {{adminToken}}
+
+### ------------------------------------------------------------------------
+### CAS D'ERREURS - DELETE
+### ------------------------------------------------------------------------
+
+### 6. Erreur : Utilisateur inexistant
+DELETE {{baseUrl}}/api/admin/user/delete/99999
+Authorization: Bearer {{adminToken}}
+
+### 7. Erreur : Tentative de suppression de son propre compte
+DELETE {{baseUrl}}/api/admin/user/delete/{{userId}}
+Authorization: Bearer {{adminToken}}
+
+### 8. Erreur : Token manquant (401 Unauthorized)
+DELETE {{baseUrl}}/api/admin/user/delete/{{userId}}
+
+### 9. Erreur : Utilisateur non admin (403 Forbidden)
+DELETE {{baseUrl}}/api/admin/user/delete/{{userId}}
+Authorization: Bearer {{adminToken}}
+
