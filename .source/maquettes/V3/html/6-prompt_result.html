@@ -23,6 +23,14 @@
       .bottom-sheet-backdrop {
         transition: opacity 0.3s ease-in-out;
       }
+      #add-favorite-btn.favorited {
+        background-color: rgba(239, 68, 68, 0.1) !important;
+        color: #ef4444 !important;
+      }
+      #add-favorite-btn.favorited .material-symbols-outlined {
+        font-variation-settings: "FILL" 1;
+        color: #ef4444;
+      }
     </style>
     <script>
       tailwind.config = {
@@ -252,11 +260,19 @@
             </ol>
           </div>
         </div>
-        <div class="p-4">
+        <div class="p-4 space-y-3">
+          <button
+            id="add-favorite-btn"
+            onclick="addToFavorites()"
+            class="w-full py-4 px-4 rounded-xl text-center font-bold bg-primary/10 hover:bg-primary/20 text-primary text-lg flex items-center justify-center gap-2 transition-colors"
+          >
+            <span class="material-symbols-outlined">favorite</span>
+            Mettre en favoris
+          </button>
           <a
             href="5-recipe_prompt.html"
             class="w-full py-4 px-4 rounded-xl text-center font-bold bg-primary text-white text-lg block"
-            >Generate Another Recipe</a
+            >Générer une nouvelle recette</a
           >
         </div>
       </main>
@@ -382,5 +398,34 @@
         </div>
       </div>
     </div>
+    <script>
+      function addToFavorites() {
+        const btn = document.getElementById("add-favorite-btn");
+        const isFavorited = btn.classList.contains("favorited");
+        
+        // Toggle favorite state
+        btn.classList.toggle("favorited");
+        
+        if (!isFavorited) {
+          btn.innerHTML = '<span class="material-symbols-outlined">favorite</span> Retiré des favoris';
+          btn.classList.add("bg-destructive/10", "text-destructive");
+          btn.classList.remove("bg-primary/10", "text-primary");
+        } else {
+          btn.innerHTML = '<span class="material-symbols-outlined">favorite</span> Mettre en favoris';
+          btn.classList.remove("bg-destructive/10", "text-destructive");
+          btn.classList.add("bg-primary/10", "text-primary");
+        }
+        
+        // Here you would make an API call to add/remove from favorites
+        console.log(isFavorited ? "Recipe removed from favorites" : "Recipe added to favorites");
+        
+        // Show feedback
+        if (!isFavorited) {
+          alert("Recette ajoutée aux favoris!");
+        } else {
+          alert("Recette retirée des favoris!");
+        }
+      }
+    </script>
   </body>
 </html>
