@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mes Recettes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#10b981",
+              "background-light": "#f8fafc",
+              "background-dark": "#0f172a",
+              "surface-light": "#ffffff",
+              "surface-dark": "#1e293b",
+              "text-light": "#1e293b",
+              "text-dark": "#e2e8f0",
+              "text-secondary-light": "#64748b",
+              "text-secondary-dark": "#94a3b8",
+              destructive: "#ef4444",
+            },
+            fontFamily: {
+              display: ["Work Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.75rem",
+              lg: "1rem",
+              xl: "1.5rem",
+              "2xl": "2rem",
+              full: "9999px",
+            },
+            boxShadow: {
+              soft: "0 4px 12px 0 rgba(0, 0, 0, 0.05)",
+              "soft-dark": "0 4px 12px 0 rgba(0, 0, 0, 0.15)",
+              fab: "0 8px 20px 0 rgba(16, 185, 129, 0.3)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body class="bg-black font-display">
+    <div
+      class="relative mx-auto flex h-auto min-h-screen w-full max-w-md flex-col overflow-x-hidden group/design-root bg-background-light dark:bg-background-dark"
+    >
+      <!-- Sticky Header -->
+      <header
+        class="sticky top-0 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm"
+      >
+        <div class="flex flex-col gap-3 p-4 pb-3">
+          <div class="flex items-center gap-3">
+            <a
+              href="13-monprofil.html"
+              class="flex items-center justify-center size-10 text-text-light dark:text-text-dark"
+            >
+              <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <div class="flex-1">
+              <p
+                class="text-text-light dark:text-text-dark tracking-light text-xl font-bold leading-tight"
+              >
+                Mes Recettes
+              </p>
+              <p
+                class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium"
+              >
+                Vos recettes créées
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content: Recipe List -->
+      <main class="flex-1 px-4 py-4 space-y-3 pb-28">
+        <!-- Recipe Card 1 -->
+        <div
+          class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-soft dark:shadow-none overflow-hidden"
+        >
+          <div class="p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <h3 class="text-lg font-bold text-text-light dark:text-text-dark">
+                  Creamy Chicken & Broccoli Rice
+                </h3>
+                <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mt-1">
+                  Créée le 15 janvier 2024
+                </p>
+                <div class="flex items-center gap-4 mt-2">
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-primary text-sm">schedule</span>
+                    <span class="text-text-secondary-light dark:text-text-secondary-dark text-xs">30 min</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-primary text-sm">restaurant_menu</span>
+                    <span class="text-text-secondary-light dark:text-text-secondary-dark text-xs">7 ingrédients</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onclick="deleteRecipe(1, this)"
+                class="flex items-center justify-center size-10 rounded-lg bg-destructive/10 hover:bg-destructive/20 text-destructive transition-colors shrink-0"
+                title="Désenregistrer cette recette"
+              >
+                <span class="material-symbols-outlined text-lg">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recipe Card 2 -->
+        <div
+          class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-soft dark:shadow-none overflow-hidden"
+        >
+          <div class="p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <h3 class="text-lg font-bold text-text-light dark:text-text-dark">
+                  Salade de Quinoa aux Légumes
+                </h3>
+                <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mt-1">
+                  Créée le 12 janvier 2024
+                </p>
+                <div class="flex items-center gap-4 mt-2">
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-primary text-sm">schedule</span>
+                    <span class="text-text-secondary-light dark:text-text-secondary-dark text-xs">20 min</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-primary text-sm">restaurant_menu</span>
+                    <span class="text-text-secondary-light dark:text-text-secondary-dark text-xs">8 ingrédients</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onclick="deleteRecipe(2, this)"
+                class="flex items-center justify-center size-10 rounded-lg bg-destructive/10 hover:bg-destructive/20 text-destructive transition-colors shrink-0"
+                title="Désenregistrer cette recette"
+              >
+                <span class="material-symbols-outlined text-lg">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recipe Card 3 -->
+        <div
+          class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-soft dark:shadow-none overflow-hidden"
+        >
+          <div class="p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <h3 class="text-lg font-bold text-text-light dark:text-text-dark">
+                  Lasagnes Maison
+                </h3>
+                <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mt-1">
+                  Créée le 10 janvier 2024
+                </p>
+                <div class="flex items-center gap-4 mt-2">
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-primary text-sm">schedule</span>
+                    <span class="text-text-secondary-light dark:text-text-secondary-dark text-xs">60 min</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-primary text-sm">restaurant_menu</span>
+                    <span class="text-text-secondary-light dark:text-text-secondary-dark text-xs">10 ingrédients</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onclick="deleteRecipe(3, this)"
+                class="flex items-center justify-center size-10 rounded-lg bg-destructive/10 hover:bg-destructive/20 text-destructive transition-colors shrink-0"
+                title="Désenregistrer cette recette"
+              >
+                <span class="material-symbols-outlined text-lg">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State (hidden by default, shown when no recipes) -->
+        <div id="empty-state" class="hidden flex flex-col items-center justify-center text-center py-16 px-4">
+          <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4">restaurant_menu</span>
+          <p class="text-lg font-bold text-text-light dark:text-text-dark">Aucune recette créée</p>
+          <p class="text-text-secondary-light dark:text-text-secondary-dark mt-1">Commencez à créer des recettes avec l'IA</p>
+          <a
+            href="5-recipe_prompt.html"
+            class="mt-6 py-3 px-6 rounded-xl text-center font-semibold bg-primary text-white"
+          >
+            Créer une recette
+          </a>
+        </div>
+      </main>
+
+      <!-- Bottom Navigation -->
+      <nav
+        class="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md border-t border-slate-200/50 dark:border-slate-700/50 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-sm"
+      >
+        <div class="flex h-20 items-center justify-around px-4">
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="3-inventory.html"
+          >
+            <span class="material-symbols-outlined">inventory_2</span>
+            <span class="text-xs font-medium">Inventaire</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="5-recipe_prompt.html"
+          >
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-xs font-medium">Recette</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="14-communaute.html"
+          >
+            <span class="material-symbols-outlined">groups</span>
+            <span class="text-xs font-medium">Communauté</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-primary"
+            href="13-monprofil.html"
+          >
+            <span
+              class="material-symbols-outlined"
+              style="font-variation-settings: 'FILL' 1"
+              >account_circle</span
+            >
+            <span class="text-xs font-medium">Profil</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+    <script>
+      function deleteRecipe(recipeId, button) {
+        if (confirm("Êtes-vous sûr de vouloir désenregistrer cette recette ? Cette action est irréversible.")) {
+          // Here you would make an API call to delete the recipe
+          console.log("Deleting recipe:", recipeId);
+          
+          // Remove the card with animation
+          const card = button.closest(".bg-surface-light");
+          card.style.transition = "opacity 0.3s, transform 0.3s";
+          card.style.opacity = "0";
+          card.style.transform = "translateX(-20px)";
+          
+          setTimeout(() => {
+            card.remove();
+            checkEmptyState();
+            
+            // Update recipe count in profile (if needed)
+            // You could emit an event or update localStorage here
+            updateRecipeCount();
+          }, 300);
+          
+          // Show feedback
+          // In a real app, you would show a toast notification
+          console.log("Recette désenregistrée avec succès!");
+        }
+      }
+
+      function checkEmptyState() {
+        const main = document.querySelector("main");
+        const cards = main.querySelectorAll(".bg-surface-light.rounded-xl");
+        const emptyState = document.getElementById("empty-state");
+        
+        if (cards.length === 0) {
+          emptyState.classList.remove("hidden");
+        } else {
+          emptyState.classList.add("hidden");
+        }
+      }
+
+      function updateRecipeCount() {
+        // Update the recipe count in the profile page
+        // This could be done via localStorage or an event
+        const count = document.querySelectorAll(".bg-surface-light.rounded-xl").length;
+        localStorage.setItem("user-recipes-count", count);
+      }
+
+      // Load recipes on page load (replace with actual API call)
+      document.addEventListener("DOMContentLoaded", () => {
+        // fetch('/api/user/recipes')
+        //   .then(res => res.json())
+        //   .then(data => {
+        //     // Render recipes dynamically
+        //   });
+        checkEmptyState();
+        console.log("Mes recettes page loaded");
+      });
+    </script>
+  </body>
+</html>
+

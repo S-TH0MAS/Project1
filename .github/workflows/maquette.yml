@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Spécifie le dossier à déployer directement
-          path: "./.source/maquettes/V2/html"
+          path: "./.source/maquettes/V3/html"
       # 5. Déploie le site sur GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment

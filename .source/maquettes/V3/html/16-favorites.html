@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mes Recettes Favorites</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+      .bottom-sheet {
+        transition: transform 0.3s ease-in-out;
+      }
+      .bottom-sheet-backdrop {
+        transition: opacity 0.3s ease-in-out;
+      }
+      .show-sheet .bottom-sheet {
+        transform: translateY(0);
+      }
+      .show-sheet .bottom-sheet-backdrop {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .favorite-btn.favorited .material-symbols-outlined {
+        font-variation-settings: "FILL" 1;
+        color: #ef4444;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#10b981",
+              "background-light": "#f8fafc",
+              "background-dark": "#0f172a",
+              "surface-light": "#ffffff",
+              "surface-dark": "#1e293b",
+              "text-light": "#1e293b",
+              "text-dark": "#e2e8f0",
+              "text-secondary-light": "#64748b",
+              "text-secondary-dark": "#94a3b8",
+              destructive: "#ef4444",
+            },
+            fontFamily: {
+              display: ["Work Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.75rem",
+              lg: "1rem",
+              xl: "1.5rem",
+              "2xl": "2rem",
+              full: "9999px",
+            },
+            boxShadow: {
+              soft: "0 4px 12px 0 rgba(0, 0, 0, 0.05)",
+              "soft-dark": "0 4px 12px 0 rgba(0, 0, 0, 0.15)",
+              fab: "0 8px 20px 0 rgba(16, 185, 129, 0.3)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body class="bg-black font-display">
+    <div
+      class="relative mx-auto flex h-auto min-h-screen w-full max-w-md flex-col overflow-x-hidden group/design-root bg-background-light dark:bg-background-dark"
+    >
+      <!-- Sticky Header -->
+      <header
+        class="sticky top-0 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm"
+      >
+        <div class="flex flex-col gap-3 p-4 pb-3">
+          <div class="flex items-center gap-3">
+            <a
+              href="14-communaute.html"
+              class="flex items-center justify-center size-10 text-text-light dark:text-text-dark"
+            >
+              <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <div class="flex-1">
+              <p
+                class="text-text-light dark:text-text-dark tracking-light text-xl font-bold leading-tight"
+              >
+                Mes Recettes Favorites
+              </p>
+              <p
+                class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium"
+              >
+                Toutes vos recettes sauvegardées
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content: Favorite Recipes -->
+      <main class="flex-1 px-4 py-4 space-y-4 pb-28">
+        <!-- Recipe Card 1 -->
+        <div
+          class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-soft dark:shadow-none overflow-hidden"
+        >
+          <!-- Profile Header -->
+          <div class="flex items-center gap-3 p-4 pb-3">
+            <div class="flex-1">
+              <p class="text-text-light dark:text-text-dark font-semibold text-base">
+                Marie Martin
+              </p>
+              <p class="text-text-secondary-light dark:text-text-secondary-dark text-xs mt-0.5">
+                Il y a 5 heures
+              </p>
+            </div>
+          </div>
+
+          <!-- Recipe Image (optional) -->
+          <div class="w-full h-48 bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+            <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark">
+              restaurant_menu
+            </span>
+          </div>
+
+          <!-- Recipe Content -->
+          <div class="p-4 space-y-4">
+            <!-- Recipe Title and Favorite Button -->
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-text-light dark:text-text-dark">
+                  Salade de Quinoa aux Légumes
+                </h3>
+                <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mt-1">
+                  Une salade fraîche et équilibrée, parfaite pour l'été
+                </p>
+              </div>
+              <button
+                class="favorite-btn favorited flex items-center justify-center size-10 rounded-full bg-slate-100 dark:bg-slate-800 text-destructive hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0"
+                onclick="toggleFavorite(this, 2)"
+                title="Retirer des favoris"
+              >
+                <span class="material-symbols-outlined">favorite</span>
+              </button>
+            </div>
+
+            <!-- Ingredients Preview -->
+            <div>
+              <h4 class="text-sm font-semibold text-text-light dark:text-text-dark mb-2">
+                Ingrédients principaux
+              </h4>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                  Quinoa
+                </span>
+                <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                  Tomates
+                </span>
+                <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                  Concombre
+                </span>
+                <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                  +5 autres
+                </span>
+              </div>
+            </div>
+
+            <!-- View Recipe Button -->
+            <button
+              onclick="viewRecipe(2)"
+              class="w-full py-3 px-4 rounded-xl text-center font-semibold bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+            >
+              Voir la recette complète
+            </button>
+          </div>
+        </div>
+
+        <!-- Empty State (hidden by default, shown when no favorites) -->
+        <div id="empty-state" class="hidden flex flex-col items-center justify-center text-center py-16 px-4">
+          <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4">favorite</span>
+          <p class="text-lg font-bold text-text-light dark:text-text-dark">Aucune recette favorite</p>
+          <p class="text-text-secondary-light dark:text-text-secondary-dark mt-1">Commencez à ajouter des recettes à vos favoris depuis la communauté</p>
+          <a
+            href="14-communaute.html"
+            class="mt-6 py-3 px-6 rounded-xl text-center font-semibold bg-primary text-white"
+          >
+            Découvrir la communauté
+          </a>
+        </div>
+      </main>
+
+      <!-- Bottom Navigation -->
+      <nav
+        class="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md border-t border-slate-200/50 dark:border-slate-700/50 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-sm"
+      >
+        <div class="flex h-20 items-center justify-around px-4">
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="3-inventory.html"
+          >
+            <span class="material-symbols-outlined">inventory_2</span>
+            <span class="text-xs font-medium">Inventaire</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="5-recipe_prompt.html"
+          >
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-xs font-medium">Recette</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="14-communaute.html"
+          >
+            <span class="material-symbols-outlined">groups</span>
+            <span class="text-xs font-medium">Communauté</span>
+          </a>
+          <a
+            class="flex flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark"
+            href="13-monprofil.html"
+          >
+            <span
+              class="material-symbols-outlined"
+              style="font-variation-settings: 'FILL' 1"
+              >account_circle</span
+            >
+            <span class="text-xs font-medium">Profil</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Bottom Sheet for Recipe Details (same as community page) -->
+      <div
+        id="recipe-sheet"
+        class="fixed inset-0 z-50 flex items-end pointer-events-none"
+      >
+        <!-- Backdrop -->
+        <div
+          class="absolute inset-0 bg-black/40 bottom-sheet-backdrop opacity-0"
+          onclick="closeRecipeSheet()"
+        ></div>
+        <!-- Sheet Content -->
+        <div
+          class="relative w-full max-w-md mx-auto bg-background-light dark:bg-background-dark rounded-t-2xl transform translate-y-full bottom-sheet pointer-events-auto max-h-[90vh] overflow-y-auto"
+        >
+          <div
+            class="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-slate-300 dark:bg-slate-600 mt-3 mb-4"
+          ></div>
+          
+          <!-- Recipe Details Content -->
+          <div id="recipe-details" class="px-4 pb-6 space-y-6">
+            <!-- Profile Section -->
+            <div id="recipe-profile" class="flex items-center gap-3">
+              <div class="flex-1">
+                <p class="text-text-light dark:text-text-dark font-semibold text-base">
+                  Jean Dupont
+                </p>
+              </div>
+            </div>
+
+            <!-- Recipe Title and Description -->
+            <div id="recipe-header" class="space-y-2">
+              <h2 id="recipe-name" class="text-2xl font-bold text-text-light dark:text-text-dark">
+                Creamy Chicken & Broccoli Rice
+              </h2>
+              <p id="recipe-description" class="text-text-secondary-light dark:text-text-secondary-dark text-sm">
+                Une recette simple et délicieuse avec vos ingrédients.
+              </p>
+            </div>
+
+            <!-- Recipe Info -->
+            <div id="recipe-info" class="grid grid-cols-2 gap-3">
+              <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-3 text-center shadow-soft dark:shadow-none">
+                <span class="material-symbols-outlined text-primary text-2xl block mb-1">
+                  schedule
+                </span>
+                <p class="text-text-secondary-light dark:text-text-secondary-dark text-xs">Temps</p>
+                <p id="recipe-time" class="text-text-light dark:text-text-dark font-semibold text-sm">30 min</p>
+              </div>
+              <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-3 text-center shadow-soft dark:shadow-none">
+                <span class="material-symbols-outlined text-primary text-2xl block mb-1">
+                  favorite
+                </span>
+                <p class="text-text-secondary-light dark:text-text-secondary-dark text-xs">Favoris</p>
+                <p class="text-text-light dark:text-text-dark font-semibold text-sm">12</p>
+              </div>
+            </div>
+
+            <!-- Ingredients Section -->
+            <div id="recipe-ingredients-section" class="space-y-3">
+              <h3 class="text-lg font-bold text-text-light dark:text-text-dark">
+                Ingrédients
+              </h3>
+              <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-soft dark:shadow-none">
+                <ul id="recipe-ingredients" class="space-y-2">
+                  <!-- Ingredients will be loaded here -->
+                </ul>
+              </div>
+            </div>
+
+            <!-- Steps Section -->
+            <div id="recipe-steps-section" class="space-y-3">
+              <h3 class="text-lg font-bold text-text-light dark:text-text-dark">
+                Instructions
+              </h3>
+              <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-soft dark:shadow-none space-y-4">
+                <ol id="recipe-steps" class="space-y-4">
+                  <!-- Steps will be loaded here -->
+                </ol>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3 pt-2">
+              <button
+                id="add-favorite-btn"
+                onclick="addToFavorites()"
+                class="w-full py-4 px-4 rounded-xl text-center font-bold bg-primary text-white text-lg shadow-fab flex items-center justify-center gap-2"
+              >
+                <span class="material-symbols-outlined">favorite</span>
+                Ajouter aux favoris
+              </button>
+              <button
+                onclick="shareRecipe()"
+                class="w-full py-3 px-4 rounded-xl text-center font-semibold bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark shadow-soft dark:shadow-none"
+              >
+                <span class="material-symbols-outlined align-middle mr-2">share</span>
+                Partager cette recette
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Recipe data (same as community page)
+      const recipesData = {
+        2: {
+          id: 2,
+          name: "Salade de Quinoa aux Légumes",
+          description: "Une salade fraîche et équilibrée, parfaite pour l'été",
+          matching: 88,
+          preparation_time: 20,
+          ingredients: [
+            "1 tasse de quinoa",
+            "2 tomates, coupées en dés",
+            "1 concombre, coupé en dés",
+            "1 poivron rouge, coupé en dés",
+            "1/4 tasse d'huile d'olive",
+            "2 cuillères à soupe de vinaigre de cidre",
+            "Sel et poivre au goût"
+          ],
+          steps: [
+            "Cuire le quinoa selon les instructions sur l'emballage. Laisser refroidir.",
+            "Couper tous les légumes en dés de taille uniforme.",
+            "Mélanger l'huile d'olive et le vinaigre dans un petit bol pour faire la vinaigrette.",
+            "Dans un grand saladier, mélanger le quinoa refroidi avec tous les légumes.",
+            "Verser la vinaigrette sur la salade et mélanger délicatement. Assaisonner avec du sel et du poivre. Servir frais."
+          ],
+          image: null,
+          author: {
+            name: "Marie Martin",
+            initials: "MM",
+            timeAgo: "Il y a 5 heures"
+          },
+          createdAt: "Il y a 5 heures"
+        }
+      };
+
+      function toggleFavorite(button, recipeId) {
+        button.classList.toggle("favorited");
+        const isFavorited = button.classList.contains("favorited");
+        button.title = isFavorited
+          ? "Retirer des favoris"
+          : "Ajouter aux favoris";
+
+        // Here you would make an API call to save/unsave the recipe
+        console.log(
+          isFavorited ? "Recipe favorited" : "Recipe unfavorited"
+        );
+
+        // If unfavorited, remove the card from the list
+        if (!isFavorited) {
+          const card = button.closest(".bg-surface-light");
+          card.style.transition = "opacity 0.3s, transform 0.3s";
+          card.style.opacity = "0";
+          card.style.transform = "translateY(-20px)";
+          setTimeout(() => {
+            card.remove();
+            checkEmptyState();
+          }, 300);
+        }
+      }
+
+      function viewRecipe(recipeId) {
+        const recipe = recipesData[recipeId];
+        if (!recipe) {
+          console.error("Recipe not found:", recipeId);
+          return;
+        }
+
+        // Update profile section
+        const profileSection = document.getElementById("recipe-profile");
+        profileSection.querySelector(".font-semibold").textContent = recipe.author.name;
+
+        // Update header
+        document.getElementById("recipe-name").textContent = recipe.name;
+        document.getElementById("recipe-description").textContent = recipe.description;
+
+        // Update info cards
+        document.getElementById("recipe-time").textContent = `${recipe.preparation_time} min`;
+
+        // Update ingredients
+        const ingredientsList = document.getElementById("recipe-ingredients");
+        ingredientsList.innerHTML = recipe.ingredients.map(ingredient => `
+          <li class="flex items-start">
+            <span class="material-symbols-outlined text-primary text-base mr-3 mt-0.5 shrink-0">check_circle</span>
+            <span class="text-text-light dark:text-text-dark text-sm">${ingredient}</span>
+          </li>
+        `).join("");
+
+        // Update steps
+        const stepsList = document.getElementById("recipe-steps");
+        stepsList.innerHTML = recipe.steps.map((step, index) => `
+          <li class="flex items-start">
+            <div class="flex-shrink-0 flex items-center justify-center size-8 bg-primary text-white font-bold text-sm rounded-full mr-3 mt-0.5">
+              ${index + 1}
+            </div>
+            <p class="text-text-light dark:text-text-dark text-sm leading-relaxed">${step}</p>
+          </li>
+        `).join("");
+
+        // Store current recipe ID for actions
+        document.getElementById("recipe-sheet").dataset.recipeId = recipeId;
+
+        // Update favorite button state
+        const favoriteBtn = document.getElementById("add-favorite-btn");
+        favoriteBtn.classList.add("favorited");
+        favoriteBtn.innerHTML = '<span class="material-symbols-outlined">favorite</span> Retiré des favoris';
+        favoriteBtn.classList.add("bg-destructive/10", "text-destructive");
+        favoriteBtn.classList.remove("bg-primary", "text-white");
+
+        // Open the sheet
+        document.getElementById("recipe-sheet").classList.add("show-sheet");
+      }
+
+      function closeRecipeSheet() {
+        document.getElementById("recipe-sheet").classList.remove("show-sheet");
+      }
+
+      function addToFavorites() {
+        const recipeId = document.getElementById("recipe-sheet").dataset.recipeId;
+        const btn = document.getElementById("add-favorite-btn");
+        const isFavorited = btn.classList.contains("favorited");
+        
+        // Toggle favorite state
+        btn.classList.toggle("favorited");
+        
+        if (!isFavorited) {
+          btn.innerHTML = '<span class="material-symbols-outlined">favorite</span> Retiré des favoris';
+          btn.classList.add("bg-destructive/10", "text-destructive");
+          btn.classList.remove("bg-primary", "text-white");
+        } else {
+          btn.innerHTML = '<span class="material-symbols-outlined">favorite</span> Ajouter aux favoris';
+          btn.classList.remove("bg-destructive/10", "text-destructive");
+          btn.classList.add("bg-primary", "text-white");
+        }
+        
+        // Here you would make an API call to add/remove from favorites
+        console.log(isFavorited ? "Recipe removed from favorites" : "Recipe added to favorites", recipeId);
+        
+        // Show feedback
+        if (!isFavorited) {
+          alert("Recette ajoutée aux favoris!");
+        } else {
+          alert("Recette retirée des favoris!");
+          closeRecipeSheet();
+          // Reload favorites list
+          location.reload();
+        }
+      }
+
+      function shareRecipe() {
+        const recipeId = document.getElementById("recipe-sheet").dataset.recipeId;
+        const recipe = recipesData[recipeId];
+        
+        if (navigator.share) {
+          navigator.share({
+            title: recipe.name,
+            text: recipe.description,
+            url: window.location.href,
+          }).catch((error) => {
+            console.log("Error sharing:", error);
+          });
+        } else {
+          navigator.clipboard.writeText(window.location.href).then(() => {
+            alert("Lien de la recette copié dans le presse-papiers !");
+          });
+        }
+      }
+
+      function checkEmptyState() {
+        const main = document.querySelector("main");
+        const cards = main.querySelectorAll(".bg-surface-light.rounded-xl");
+        const emptyState = document.getElementById("empty-state");
+        
+        if (cards.length === 0) {
+          emptyState.classList.remove("hidden");
+        } else {
+          emptyState.classList.add("hidden");
+        }
+      }
+
+      // Load favorites on page load (replace with actual API call)
+      document.addEventListener("DOMContentLoaded", () => {
+        // fetch('/api/favorites')
+        //   .then(res => res.json())
+        //   .then(data => {
+        //     // Render favorite recipes dynamically
+        //   });
+        checkEmptyState();
+        console.log("Favorites page loaded");
+      });
+    </script>
+  </body>
+</html>
+

@@ -27,8 +27,16 @@ L'application sera conçue **en mobile first** afin d'assurer une expérience op
 
 ## 🖼️ Maquettes
 
-* **Vers la maquette fonctionnelle** [https://S-TH0MAS.github.io/Project1](https://S-TH0MAS.github.io/Project1)
-* **Vers les images** [https://github.com/S-TH0MAS/Project1/tree/master/.source/maquettes/img](https://github.com/S-TH0MAS/Project1/tree/master/.source/maquettes/img)
+* **Vers la maquette fonctionnelle V3** [https://S-TH0MAS.github.io/Project1](https://S-TH0MAS.github.io/Project1)
+* **Vers les images** [https://github.com/S-TH0MAS/Project1/tree/master/.source/maquettes](https://github.com/S-TH0MAS/Project1/tree/master/.source/maquettes)
+
+---
+
+## 📊 Diagrammes
+
+* **Vers le diagramme V1** [https://github.com/S-TH0MAS/Project1/tree/master/.source/diagrammes/V1](https://github.com/S-TH0MAS/Project1/tree/master/.source/diagrammes/V1)
+* **Vers le diagramme V2** [https://github.com/S-TH0MAS/Project1/tree/master/.source/diagrammes/V2](https://github.com/S-TH0MAS/Project1/tree/master/.source/diagrammes/V2)
+* **Vers le diagramme V3** [https://github.com/S-TH0MAS/Project1/tree/master/.source/diagrammes/V3](https://github.com/S-TH0MAS/Project1/tree/master/.source/diagrammes/V3)
 
 ---
 
@@ -80,13 +88,19 @@ Fonctionnalités prévues dans les versions avancées :
 ### **Version 2**
 
 * UI améliorée
-* Prise en compte de contraintes pour les recettes
+* Gestion administration
+
 
 ### **Version 3**
 
-* Scan de ticket de caisse avec IA
+* Ajout des favoris sur ls recette
+* Partage des recettes entre user
 
 ### **Version 4**
+
+* Scan de ticket de caisse avec IA
+
+### **Version 5**
 
 * Fonctionnalité vocale
 
