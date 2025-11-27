@@ -37,6 +37,7 @@ classDiagram
         +author: clientId
         +name: string
         +description: string
+        +date: int
         +matching: int
         +preparation_time: int
         +ingredients: string[]
