@@ -34,6 +34,7 @@ classDiagram
 
     class Recipe {
         +id: int
+        +author: clientId
         +name: string
         +description: string
         +matching: int
