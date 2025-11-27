@@ -4,7 +4,7 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
 
 ## Fichiers disponibles
 
-- **generate-recipe.http** : Tests pour générer une recette (`POST /api/generate_recipes`)
+- **generate-recipe.http** : Tests pour générer une recette (`POST /api/generate_recipes`) et sauvegarder une recette (`POST /api/save_recipe`)
 
 ## Utilisation dans PHPStorm
 
@@ -102,12 +102,54 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
   }
   ```
 
+### Sauvegarde de recette (POST /api/save_recipe)
+- **201 Created** : Recette sauvegardée avec succès
+  ```json
+  {
+    "message": "Recipe saved successfully",
+    "recipe_id": 1
+  }
+  ```
+
+- **400 Bad Request** : Cache key manquant, vide ou invalide
+  ```json
+  {
+    "error": "cache_key is required"
+  }
+  ```
+  ou
+  ```json
+  {
+    "error": "Invalid cache key: ..."
+  }
+  ```
+
+- **404 Not Found** : Recette non trouvée dans le cache ou cache expiré
+  ```json
+  {
+    "error": "Not Found",
+    "message": "Recipe not found in cache or cache expired"
+  }
+  ```
+
+- **401 Unauthorized** : Token manquant ou invalide
+- **403 Forbidden** : L'utilisateur n'est pas un Client
+
 ## Paramètres
 
-### Body (JSON)
+### POST /api/generate_recipes
+
+#### Body (JSON)
 | Paramètre | Type | Requis | Description |
 |-----------|------|--------|-------------|
 | `prompt` | string | Oui | La demande de l'utilisateur pour la recette (ex: "Donne-moi une recette simple") |
+
+### POST /api/save_recipe
+
+#### Body (JSON)
+| Paramètre | Type | Requis | Description |
+|-----------|------|--------|-------------|
+| `cache_key` | string | Oui | La clé de cache obtenue depuis la réponse de `/generate_recipes` (ex: "recipe_12345678-1234-1234-1234-123456789abc") |
 
 ### Exemples de requêtes
 
@@ -134,6 +176,7 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
 
 ## Notes importantes
 
+### Génération de recette (POST /api/generate_recipes)
 - Cette route est **protégée** et nécessite une authentification JWT
 - La route utilise l'inventaire du client connecté pour générer la recette
 - Le service Gemini analyse les ingrédients disponibles et génère une recette adaptée
@@ -141,6 +184,15 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
 - Les ingrédients non quantifiables (sel, farine, huile, épices) sont considérés comme disponibles à volonté
 - Les ingrédients dénombrables (pommes, œufs) ne peuvent pas dépasser le stock disponible
 - Si l'inventaire est vide, la route retournera une erreur 400
+- La réponse contient un `cache_key` qui peut être utilisé pour sauvegarder la recette via `/save_recipe`
+
+### Sauvegarde de recette (POST /api/save_recipe)
+- Cette route est **protégée** et nécessite une authentification JWT
+- **Important** : Vous devez d'abord générer une recette via `/generate_recipes` pour obtenir un `cache_key` valide
+- Le `cache_key` est valide pendant 1 heure après la génération de la recette
+- La recette est sauvegardée en base de données avec le client actuel comme auteur
+- La recette est automatiquement ajoutée aux favoris du client
+- Si le cache a expiré ou si la clé est invalide, la route retournera une erreur 404
 
 ## Variables d'environnement
 

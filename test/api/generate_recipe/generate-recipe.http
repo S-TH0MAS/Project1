@@ -67,3 +67,70 @@ Authorization: Bearer invalid_token_here
   "prompt": "Donne-moi une recette"
 }
 
+### ============================================
+### TESTS POUR /save_recipe
+### ============================================
+### IMPORTANT: Vous devez d'abord générer une recette via POST /api/generate_recipes
+### pour obtenir un cache_key valide avant de tester cette route
+
+### Sauvegarder une recette avec un cache_key valide
+### Remplacez {{cache_key}} par le cache_key obtenu depuis la réponse de /generate_recipes
+POST {{baseUrl}}/api/save_recipe
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "cache_key": "recipe_12345678-1234-1234-1234-123456789abc"
+}
+
+### Test avec cache_key manquant (devrait retourner 400)
+POST {{baseUrl}}/api/save_recipe
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{}
+
+### Test avec cache_key vide (devrait retourner 400)
+POST {{baseUrl}}/api/save_recipe
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "cache_key": ""
+}
+
+### Test avec cache_key invalide (devrait retourner 400 ou 404)
+POST {{baseUrl}}/api/save_recipe
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "cache_key": "invalid_cache_key_123"
+}
+
+### Test avec cache_key expiré ou inexistant (devrait retourner 404)
+POST {{baseUrl}}/api/save_recipe
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "cache_key": "recipe_00000000-0000-0000-0000-000000000000"
+}
+
+### Test sans token (devrait retourner 401)
+POST {{baseUrl}}/api/save_recipe
+Content-Type: {{contentType}}
+
+{
+  "cache_key": "recipe_8a26b565-1efa-47b4-a84a-9878af8a5d76"
+}
+
+### Test avec token invalide (devrait retourner 401)
+POST {{baseUrl}}/api/save_recipe
+Content-Type: {{contentType}}
+Authorization: Bearer invalid_token_here
+
+{
+  "cache_key": "recipe_12345678-1234-1234-1234-123456789abc"
+}
+

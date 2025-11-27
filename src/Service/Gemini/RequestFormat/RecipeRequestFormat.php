@@ -88,6 +88,43 @@ class RecipeRequestFormat
     }
 
     /**
+     * Parse la réponse décodée de Gemini en un tableau compatible avec l'entité Recipe
+     *
+     * @param array $decodedResponse Réponse décodée de Gemini
+     * @return array Tableau formaté selon la structure de l'entité Recipe
+     * @throws Exception Si les données requises sont manquantes
+     */
+    public function parse(array $decodedResponse): array
+    {
+        // Vérifier que les champs requis sont présents
+        $requiredFields = ['recipe_name', 'short_description', 'matching_score', 'preparation_time_minutes', 'ingredients', 'steps'];
+        foreach ($requiredFields as $field) {
+            if (!isset($decodedResponse[$field])) {
+                throw new Exception("Missing required field in Gemini response: {$field}");
+            }
+        }
+
+        // Transformer la réponse Gemini en format compatible avec l'entité Recipe
+        return [
+            'name' => $decodedResponse['recipe_name'],
+            'description' => $decodedResponse['short_description'],
+            'matching' => (int) $decodedResponse['matching_score'],
+            'preparation_time' => (int) $decodedResponse['preparation_time_minutes'],
+            'ingredients' => is_array($decodedResponse['ingredients']) 
+                ? $decodedResponse['ingredients'] 
+                : [],
+            'steps' => is_array($decodedResponse['steps']) 
+                ? $decodedResponse['steps'] 
+                : [],
+            // Les champs suivants ne sont pas fournis par Gemini et doivent être définis ailleurs :
+            // 'id' => null, // Sera généré par la base de données
+            // 'author' => null, // Doit être défini lors de la création de l'entité
+            // 'date' => null, // Doit être défini (timestamp de création)
+            // 'image' => null, // Optionnel, peut être null
+        ];
+    }
+
+    /**
      * Construit le prompt pour la génération de recette
      *
      * @param string $userRequest Demande de l'utilisateur
