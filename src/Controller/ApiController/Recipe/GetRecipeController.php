@@ -80,7 +80,7 @@ class GetRecipeController extends AbstractController
                 'steps' => $recipe->getSteps(),
                 'date' => $recipe->getDate(),
                 'image' => $recipe->getImage(),
-                'author' => $author ? ['name' => $author->getName()] : null,
+                'author' => $author ? ['id' => $author->getId(), 'name' => $author->getName()] : null,
             ];
         }
 

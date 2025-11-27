@@ -135,6 +135,16 @@ Authorization: Bearer {{token}}
   "offset": 0
 }
 
+### Test avec quantity supérieur à 100 (devrait retourner 400)
+POST {{baseUrl}}/api/recipe/get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 101,
+  "offset": 0
+}
+
 ### Test avec offset négatif (devrait retourner 400)
 POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}

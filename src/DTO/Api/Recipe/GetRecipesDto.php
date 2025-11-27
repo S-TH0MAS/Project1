@@ -9,6 +9,7 @@ class GetRecipesDto
     #[Assert\NotBlank(message: 'quantity is required')]
     #[Assert\Type(type: 'integer', message: 'quantity must be an integer')]
     #[Assert\Positive(message: 'quantity must be a positive integer')]
+    #[Assert\LessThanOrEqual(value: 100, message: 'quantity must be less than or equal to 100')]
     private ?int $quantity = null;
 
     #[Assert\Type(type: 'integer', message: 'offset must be an integer')]

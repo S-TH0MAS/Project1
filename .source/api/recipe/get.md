@@ -16,7 +16,7 @@ Cette route permet de récupérer une liste paginée de recettes depuis la base 
 ### Body (JSON)
 | Paramètre | Type | Requis | Description |
 |-----------|------|--------|-------------|
-| `quantity` | integer | Oui | Nombre de recettes à récupérer (doit être un entier positif) |
+| `quantity` | integer | Oui | Nombre de recettes à récupérer (doit être un entier positif, maximum 100) |
 | `offset` | integer | Non | Nombre de recettes à ignorer avant de commencer à récupérer (doit être >= 0, défaut: 0) |
 | `mode` | string | Non | Mode de récupération : `all` (toutes les recettes), `favorite` (recettes favorites du client), ou `author` (recettes dont le client est l'auteur). Défaut: `all` |
 
@@ -119,6 +119,7 @@ Content-Type: application/json
       "date": 1635876540,
       "image": null,
       "author": {
+        "id": 1,
         "name": "Jean Dupont"
       }
     }
@@ -139,6 +140,7 @@ Content-Type: application/json
   - `date` : Timestamp de création de la recette (integer)
   - `image` : URL de l'image de la recette ou `null` (string|null)
   - `author` : Objet contenant les informations de l'auteur de la recette (object|null)
+    - `id` : Identifiant unique de l'auteur (integer)
     - `name` : Nom de l'auteur (string)
 
 > **Note** : Si aucune recette n'est trouvée, la réponse contiendra un tableau vide : `{"recipes": []}`
@@ -167,6 +169,18 @@ Content-Type: application/json
   "message": "Les données fournies ne sont pas valides",
   "details": [
     "quantity: This value should be positive."
+  ]
+}
+```
+
+**400 Bad Request** - Quantity supérieur à 100
+```json
+{
+  "code": 400,
+  "error": "Validation Error",
+  "message": "Les données fournies ne sont pas valides",
+  "details": [
+    "quantity: This value should be less than or equal to 100."
   ]
 }
 ```
@@ -231,7 +245,7 @@ Content-Type: application/json
 - **Rôle requis** : L'utilisateur doit avoir au minimum le rôle `ROLE_USER`
 - **Type d'utilisateur** : Si `mode` est `favorite` ou `author`, l'utilisateur connecté doit être une instance de `Client` (hérite de `User`)
 - **Pagination** : 
-  - `quantity` doit être un entier positif (>= 1)
+  - `quantity` doit être un entier positif (>= 1) et ne peut pas dépasser 100
   - `offset` est optionnel et vaut 0 par défaut s'il n'est pas fourni
   - `offset` doit être un entier positif ou zéro (>= 0) s'il est fourni
   - La pagination s'applique à tous les modes
@@ -356,7 +370,8 @@ curl -X POST http://localhost:8000/api/recipe/get \
 - **Pagination** : La pagination fonctionne avec tous les modes
 - **Tableaux vides** : Si aucune recette n'est trouvée (par exemple, si le client n'a pas de favoris, n'est pas auteur, ou si `offset` dépasse le nombre total de recettes), la réponse contiendra `{"recipes": []}`
 - **Performance** : 
-  - Pour de grandes quantités de données, il est recommandé d'utiliser des valeurs raisonnables pour `quantity` (par exemple, entre 10 et 50)
+  - `quantity` est limité à 100 maximum pour garantir de bonnes performances
+  - Il est recommandé d'utiliser des valeurs raisonnables pour `quantity` (par exemple, entre 10 et 50)
   - La pagination est effectuée au niveau SQL, ce qui garantit de bonnes performances même avec de grandes quantités de données
   - Les auteurs sont préchargés pour éviter le problème N+1 (une seule requête au lieu d'une par recette)
 - **Tri** : 

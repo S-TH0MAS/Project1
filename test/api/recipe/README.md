@@ -102,6 +102,7 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
         "date": 1635876540,
         "image": null,
         "author": {
+          "id": 1,
           "name": "Jean Dupont"
         }
       }
@@ -109,7 +110,7 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
   }
   ```
 
-- **400 Bad Request** : Paramètres manquants, invalides ou négatifs
+- **400 Bad Request** : Paramètres manquants, invalides, négatifs ou quantity supérieur à 100
 - **401 Unauthorized** : Token manquant ou invalide
 - **403 Forbidden** : L'utilisateur n'est pas un Client (si mode = favorite ou author)
 
@@ -134,7 +135,7 @@ Ce dossier contient les fichiers de test pour les routes de gestion des recettes
 #### Body (JSON)
 | Paramètre | Type | Requis | Description |
 |-----------|------|--------|-------------|
-| `quantity` | integer | Oui | Nombre de recettes à récupérer (doit être un entier positif) |
+| `quantity` | integer | Oui | Nombre de recettes à récupérer (doit être un entier positif, maximum 100) |
 | `offset` | integer | Non | Nombre de recettes à ignorer avant de commencer à récupérer (doit être >= 0, défaut: 0) |
 | `mode` | string | Non | Mode de récupération : `all` (toutes les recettes), `favorite` (recettes favorites du client), ou `author` (recettes dont le client est l'auteur). Défaut: `all` |
 
