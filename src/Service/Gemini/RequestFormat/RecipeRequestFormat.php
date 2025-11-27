@@ -27,7 +27,7 @@ class RecipeRequestFormat
                 'items' => ['type' => 'STRING']
             ]
         ],
-        'required' => ['recipe_name', 'matching_score', 'ingredients', 'steps']
+        'required' => ['recipe_name', 'matching_score', 'preparation_time_minutes','ingredients', 'steps']
     ];
 
     public function __construct(
