@@ -13,6 +13,7 @@ class RecipeRequestFormat
         'type' => 'OBJECT',
         'properties' => [
             'recipe_name' => ['type' => 'STRING'],
+            'short_description' => ['type' => 'STRING'],
             'matching_score' => [
                 'type' => 'INTEGER',
                 'description' => 'Score de pertinence entre 0 et 100'
@@ -27,7 +28,7 @@ class RecipeRequestFormat
                 'items' => ['type' => 'STRING']
             ]
         ],
-        'required' => ['recipe_name', 'matching_score', 'preparation_time_minutes','ingredients', 'steps']
+        'required' => ['recipe_name', 'short_description','matching_score', 'preparation_time_minutes','ingredients', 'steps']
     ];
 
     public function __construct(
