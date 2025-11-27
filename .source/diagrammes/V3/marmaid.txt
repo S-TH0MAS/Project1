@@ -35,6 +35,7 @@ classDiagram
     class Recipe {
         +id: int
         +name: string
+        +description: string
         +matching: int
         +preparation_time: int
         +ingredients: string[]
