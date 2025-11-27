@@ -30,7 +30,6 @@ classDiagram
 
     class ClientItem {
         +clientId: int
-        %% Hérite des propriétés de Item + attributs spécifiques si nécessaire
     }
 
     class Recipe {
@@ -40,6 +39,7 @@ classDiagram
         +preparation_time: int
         +ingredients: string[]
         +steps: string[]
+        +image: string
     }
 
     %% Relations d'héritage
@@ -51,6 +51,6 @@ classDiagram
     Category "1" -- "0..*" Item : contient
     Inventory "0..*" --> Item : référence
 
-    %% Relations ajoutées récemment
+    %% Relations ajoutées
     Client "*" -- "*" Recipe : a pour favoris
     Client "1" -- "0..*" ClientItem : crée
