@@ -3,10 +3,12 @@
 namespace App\Controller\ApiController;
 
 use App\DTO\Api\Recipe\GenerateRecipeDto;
+use App\DTO\Api\Recipe\GetRecipesDto;
 use App\DTO\Api\Recipe\SaveRecipeDto;
 use App\Entity\Client;
 use App\Entity\Recipe;
 use App\Repository\InventoryRepository;
+use App\Repository\RecipeRepository;
 use App\Service\Gemini\RequestFormat\RecipeRequestFormat;
 use App\Service\Validator\RequestValidator;
 use App\Trait\ApiResponseTrait;
@@ -198,6 +200,56 @@ class RecipeController extends AbstractController
                 'recipe_id' => $recipe->getId(),
             ],
             Response::HTTP_CREATED
+        );
+    }
+
+    #[Route('/recipe_get', name: 'api_recipe_get', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function getRecipes(
+        Request $request,
+        RequestValidator $requestValidator,
+        RecipeRepository $recipeRepository
+    ): JsonResponse {
+        try {
+            $dto = $requestValidator->validate($request->getContent(), GetRecipesDto::class);
+        } catch (\Exception $e) {
+            return $this->jsonException($e);
+        }
+
+        $quantity = $dto->getQuantity();
+        $offset = $dto->getOffset();
+
+        // Récupérer les recettes avec limit et offset
+        $recipes = $recipeRepository->findBy(
+            [],
+            ['id' => 'ASC'],
+            $quantity,
+            $offset
+        );
+
+        // Transformer les entités Recipe en tableaux pour la réponse JSON
+        $recipesArray = [];
+        foreach ($recipes as $recipe) {
+
+            $recipesArray[] = [
+                'id' => $recipe->getId(),
+                'name' => $recipe->getName(),
+                'description' => $recipe->getDescription(),
+                'matching' => $recipe->getMatching(),
+                'preparation_time' => $recipe->getPreparationTime(),
+                'ingredients' => $recipe->getIngredients(),
+                'steps' => $recipe->getSteps(),
+                'date' => $recipe->getDate(),
+                'image' => $recipe->getImage(),
+                'author_id' => $recipe->getAuthor()?->getId(),
+            ];
+        }
+
+        return new JsonResponse(
+            [
+                'recipes' => $recipesArray,
+            ],
+            Response::HTTP_OK
         );
     }
 }

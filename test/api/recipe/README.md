@@ -1,10 +1,12 @@
-# Tests API - Route Génération de Recettes
+# Tests API - Routes Recettes
 
-Ce dossier contient les fichiers de test pour la route de génération de recettes via Gemini.
+Ce dossier contient les fichiers de test pour les routes de gestion des recettes.
 
 ## Fichiers disponibles
 
-- **generate-recipe.http** : Tests pour générer une recette (`POST /api/generate_recipes`) et sauvegarder une recette (`POST /api/save_recipe`)
+- **generate-recipes.http** : Tests pour générer une recette (`POST /api/generate_recipes`)
+- **save-recipe.http** : Tests pour sauvegarder une recette (`POST /api/save_recipe`)
+- **recipe-get.http** : Tests pour récupérer des recettes (`POST /api/recipe_get`)
 
 ## Utilisation dans PHPStorm
 
@@ -30,7 +32,7 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
    symfony server:start
    ```
 
-2. **S'authentifier** avant de tester la génération de recettes :
+2. **S'authentifier** avant de tester les routes :
    - Exécutez d'abord une requête dans `../user/login.http` pour obtenir un token JWT
    - La réponse contiendra un objet JSON avec le champ `token` :
      ```json
@@ -38,14 +40,14 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
      }
      ```
-   - Copiez la valeur du token (sans les guillemets) et remplacez `{{token}}` dans le fichier `generate-recipe.http`
+   - Copiez la valeur du token (sans les guillemets) et remplacez `{{token}}` dans les fichiers de test
    - **Important** : Le token expire après un certain temps, vous devrez peut-être vous reconnecter si vous obtenez une erreur 401
 
-3. **Avoir des items dans l'inventaire** :
+3. **Avoir des items dans l'inventaire** (pour `/generate_recipes`) :
    - Utilisez la route `POST /api/inventories/add` (voir `../inventory/add-inventory.http`) pour ajouter des items à votre inventaire
    - La route nécessite au moins un item dans l'inventaire pour fonctionner
 
-4. **Configuration Gemini** :
+4. **Configuration Gemini** (pour `/generate_recipes`) :
    - La clé API Gemini doit être configurée dans le fichier `.env` avec la variable `GEMINI_KEY`
    - Voir `../../.source/env/README.md` pour plus d'informations
 
@@ -55,52 +57,20 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
 - **200 OK** : Recette générée avec succès
   ```json
   {
-    "recipe_name": "Tarte aux pommes",
-    "matching_score": 95,
-    "preparation_time_minutes": 45,
-    "ingredients": [
-      "5 Pommes",
-      "200g de farine",
-      "100g de beurre",
-      "50g de sucre"
-    ],
-    "steps": [
-      "Étape 1 : Préparer la pâte...",
-      "Étape 2 : Éplucher et couper les pommes...",
-      "Étape 3 : Assembler la tarte..."
-    ]
+    "name": "Tarte aux pommes",
+    "description": "Une délicieuse tarte aux pommes maison",
+    "matching": 95,
+    "preparation_time": 45,
+    "ingredients": ["5 Pommes", "200g de farine", "100g de beurre"],
+    "steps": ["Étape 1", "Étape 2"],
+    "cache_key": "recipe_550e8400-e29b-41d4-a716-446655440000"
   }
   ```
-
-**Structure de la réponse :**
-- `recipe_name` : Nom de la recette (string)
-- `matching_score` : Score de pertinence entre 0 et 100 (integer)
-- `preparation_time_minutes` : Temps de préparation en minutes (integer)
-- `ingredients` : Liste des ingrédients nécessaires (array de string)
-- `steps` : Étapes de préparation (array de string)
 
 - **400 Bad Request** : Prompt manquant ou vide, ou inventaire vide
-  ```json
-  {
-    "error": "Prompt is required"
-  }
-  ```
-  ou
-  ```json
-  {
-    "error": "No ingredients available in inventory"
-  }
-  ```
-
 - **401 Unauthorized** : Token manquant ou invalide
 - **403 Forbidden** : L'utilisateur n'est pas un Client
 - **500 Internal Server Error** : Erreur lors de l'appel à Gemini
-  ```json
-  {
-    "error": "Failed to generate recipe",
-    "message": "Description de l'erreur"
-  }
-  ```
 
 ### Sauvegarde de recette (POST /api/save_recipe)
 - **201 Created** : Recette sauvegardée avec succès
@@ -112,28 +82,33 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
   ```
 
 - **400 Bad Request** : Cache key manquant, vide ou invalide
-  ```json
-  {
-    "error": "cache_key is required"
-  }
-  ```
-  ou
-  ```json
-  {
-    "error": "Invalid cache key: ..."
-  }
-  ```
-
 - **404 Not Found** : Recette non trouvée dans le cache ou cache expiré
-  ```json
-  {
-    "error": "Not Found",
-    "message": "Recipe not found in cache or cache expired"
-  }
-  ```
-
 - **401 Unauthorized** : Token manquant ou invalide
 - **403 Forbidden** : L'utilisateur n'est pas un Client
+
+### Récupération de recettes (POST /api/recipe_get)
+- **200 OK** : Recettes récupérées avec succès
+  ```json
+  {
+    "recipes": [
+      {
+        "id": 1,
+        "name": "Tarte aux pommes",
+        "description": "Une délicieuse tarte aux pommes maison",
+        "matching": 95,
+        "preparation_time": 45,
+        "ingredients": ["5 Pommes", "200g de farine", "100g de beurre"],
+        "steps": ["Étape 1", "Étape 2"],
+        "date": 1635876540,
+        "image": null,
+        "author_id": 1
+      }
+    ]
+  }
+  ```
+
+- **400 Bad Request** : Paramètres manquants, invalides ou négatifs
+- **401 Unauthorized** : Token manquant ou invalide
 
 ## Paramètres
 
@@ -151,28 +126,13 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
 |-----------|------|--------|-------------|
 | `cache_key` | string | Oui | La clé de cache obtenue depuis la réponse de `/generate_recipes` (ex: "recipe_12345678-1234-1234-1234-123456789abc") |
 
-### Exemples de requêtes
+### POST /api/recipe_get
 
-**Prompt simple :**
-```json
-{
-  "prompt": "Donne-moi une recette simple et rapide"
-}
-```
-
-**Prompt détaillé :**
-```json
-{
-  "prompt": "Je veux une recette végétarienne avec mes ingrédients disponibles"
-}
-```
-
-**Prompt pour un type de plat spécifique :**
-```json
-{
-  "prompt": "Propose-moi un dessert"
-}
-```
+#### Body (JSON)
+| Paramètre | Type | Requis | Description |
+|-----------|------|--------|-------------|
+| `quantity` | integer | Oui | Nombre de recettes à récupérer (doit être un entier positif) |
+| `offset` | integer | Oui | Nombre de recettes à ignorer avant de commencer à récupérer (doit être >= 0) |
 
 ## Notes importantes
 
@@ -180,7 +140,7 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
 - Cette route est **protégée** et nécessite une authentification JWT
 - La route utilise l'inventaire du client connecté pour générer la recette
 - Le service Gemini analyse les ingrédients disponibles et génère une recette adaptée
-- Le `matching_score` indique à quel point la recette correspond à la demande et utilise bien le stock disponible
+- Le `matching` indique à quel point la recette correspond à la demande et utilise bien le stock disponible
 - Les ingrédients non quantifiables (sel, farine, huile, épices) sont considérés comme disponibles à volonté
 - Les ingrédients dénombrables (pommes, œufs) ne peuvent pas dépasser le stock disponible
 - Si l'inventaire est vide, la route retournera une erreur 400
@@ -194,10 +154,20 @@ Ce dossier contient les fichiers de test pour la route de génération de recett
 - La recette est automatiquement ajoutée aux favoris du client
 - Si le cache a expiré ou si la clé est invalide, la route retournera une erreur 404
 
+### Récupération de recettes (POST /api/recipe_get)
+- Cette route est **protégée** et nécessite une authentification JWT
+- **Pagination** : Utilisez `quantity` pour limiter le nombre de résultats et `offset` pour la pagination
+- Les recettes sont triées par ID croissant
+- Si aucune recette n'est trouvée, la réponse contiendra un tableau vide `{"recipes": []}`
+- **Exemples d'utilisation** :
+  - `{"quantity": 10, "offset": 0}` : Récupère les 10 premières recettes
+  - `{"quantity": 10, "offset": 10}` : Récupère les 10 recettes suivantes (page 2)
+  - `{"quantity": 5, "offset": 0}` : Récupère les 5 premières recettes
+
 ## Variables d'environnement
 
 Assurez-vous que les variables d'environnement suivantes sont configurées dans votre fichier `.env` :
-- `GEMINI_KEY` : Clé API pour accéder à l'API Google Gemini
+- `GEMINI_KEY` : Clé API pour accéder à l'API Google Gemini (requis pour `/generate_recipes`)
 - `HTTP_PROXY` : (Optionnel) Proxy pour accéder à Gemini si nécessaire
 
 Pour plus d'informations, consultez `../../.source/env/README.md`.

@@ -481,6 +481,229 @@ curl -X POST http://localhost:8000/api/save_recipe \
 
 ---
 
+## 3. Récupération de recettes
+
+### Route
+```
+POST /api/recipe_get
+```
+
+### Méthode
+`POST`
+
+### Description
+Cette route permet de récupérer une liste paginée de recettes depuis la base de données. Les recettes sont triées par ID croissant et peuvent être paginées à l'aide des paramètres `quantity` (nombre de recettes à récupérer) et `offset` (nombre de recettes à ignorer avant de commencer la récupération).
+
+### Paramètres
+
+#### Body (JSON)
+| Paramètre | Type | Requis | Description |
+|-----------|------|--------|-------------|
+| `quantity` | integer | Oui | Nombre de recettes à récupérer (doit être un entier positif) |
+| `offset` | integer | Oui | Nombre de recettes à ignorer avant de commencer à récupérer (doit être >= 0) |
+
+#### Exemple de requête
+```json
+{
+  "quantity": 10,
+  "offset": 0
+}
+```
+
+### Headers requis
+
+| Header | Type | Requis | Description |
+|--------|------|--------|-------------|
+| `Authorization` | string | Oui | Token JWT obtenu via `POST /user/login` au format `Bearer <token>` |
+| `Content-Type` | string | Oui | Doit être `application/json` |
+
+#### Exemple de requête complète
+```http
+POST /api/recipe_get
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2MzU4NzY1NDAsImV4cCI6MTYzNTg4MDE0MCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiY2xpZW50QGV4YW1wbGUuY29tIn0...
+Content-Type: application/json
+
+{
+  "quantity": 10,
+  "offset": 0
+}
+```
+
+### Retour
+
+#### Succès (200 OK)
+```json
+{
+  "recipes": [
+    {
+      "id": 1,
+      "name": "Tarte aux pommes",
+      "description": "Une délicieuse tarte aux pommes maison",
+      "matching": 95,
+      "preparation_time": 45,
+      "ingredients": [
+        "5 Pommes",
+        "200g de farine",
+        "100g de beurre",
+        "50g de sucre",
+        "1 pincée de sel"
+      ],
+      "steps": [
+        "Préparer la pâte en mélangeant la farine, le beurre et le sel",
+        "Étaler la pâte dans un moule à tarte",
+        "Éplucher et couper les pommes en lamelles",
+        "Disposer les pommes sur la pâte",
+        "Saupoudrer de sucre",
+        "Enfourner à 180°C pendant 30 minutes"
+      ],
+      "date": 1635876540,
+      "image": null,
+      "author_id": 1
+    }
+  ]
+}
+```
+
+**Structure de la réponse :**
+
+- `recipes` : Tableau contenant les recettes récupérées (array)
+  - `id` : Identifiant unique de la recette (integer)
+  - `name` : Nom de la recette (string)
+  - `description` : Description de la recette (string)
+  - `matching` : Score de pertinence entre 0 et 100 (integer)
+  - `preparation_time` : Temps de préparation en minutes (integer)
+  - `ingredients` : Liste des ingrédients nécessaires (array de string)
+  - `steps` : Étapes de préparation (array de string)
+  - `date` : Timestamp de création de la recette (integer)
+  - `image` : URL de l'image de la recette ou `null` (string|null)
+  - `author_id` : Identifiant de l'auteur de la recette (integer|null)
+
+> **Note** : Si aucune recette n'est trouvée, la réponse contiendra un tableau vide : `{"recipes": []}`
+
+#### Erreurs possibles
+
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
+
+**400 Bad Request** - Paramètre manquant
+```json
+{
+  "code": 400,
+  "error": "Validation Error",
+  "message": "Les données fournies ne sont pas valides",
+  "details": [
+    "quantity: This value should not be blank."
+  ]
+}
+```
+
+**400 Bad Request** - Paramètre invalide (quantity négatif ou zéro)
+```json
+{
+  "code": 400,
+  "error": "Validation Error",
+  "message": "Les données fournies ne sont pas valides",
+  "details": [
+    "quantity: This value should be positive."
+  ]
+}
+```
+
+**400 Bad Request** - Offset négatif
+```json
+{
+  "code": 400,
+  "error": "Validation Error",
+  "message": "Les données fournies ne sont pas valides",
+  "details": [
+    "offset: This value should be greater than or equal to 0."
+  ]
+}
+```
+
+**401 Unauthorized** - Token manquant ou invalide
+```json
+{
+  "code": 401,
+  "message": "JWT Token not found"
+}
+```
+
+**401 Unauthorized** - Token expiré
+```json
+{
+  "code": 401,
+  "message": "Expired JWT Token"
+}
+```
+
+### Contraintes
+
+- **Sécurité** : Cette route est protégée et nécessite une authentification JWT
+- **Authentification** : 
+  - Un token JWT valide doit être fourni dans l'en-tête `Authorization`
+  - Le token doit être obtenu via `POST /user/login`
+  - Le token doit être au format `Bearer <token>`
+  - Le token ne doit pas être expiré
+- **Rôle requis** : L'utilisateur doit avoir au minimum le rôle `ROLE_USER`
+- **Pagination** : 
+  - `quantity` doit être un entier positif (>= 1)
+  - `offset` doit être un entier positif ou zéro (>= 0)
+  - Les recettes sont triées par ID croissant
+
+### Logique métier
+
+1. **Validation des paramètres** : Les paramètres `quantity` et `offset` sont validés pour s'assurer qu'ils sont présents et valides
+2. **Récupération des recettes** : Les recettes sont récupérées depuis la base de données avec :
+   - Tri par ID croissant
+   - Limite définie par `quantity`
+   - Décalage défini par `offset`
+3. **Transformation des données** : Les entités `Recipe` sont transformées en tableaux pour la réponse JSON
+4. **Retour des résultats** : Les recettes sont retournées dans un tableau `recipes`
+
+### Exemples d'utilisation
+
+#### Exemple 1 : Récupérer les 10 premières recettes
+```bash
+curl -X POST http://localhost:8000/api/recipe_get \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"quantity": 10, "offset": 0}'
+```
+
+#### Exemple 2 : Pagination - Récupérer les 10 recettes suivantes
+```bash
+curl -X POST http://localhost:8000/api/recipe_get \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"quantity": 10, "offset": 10}'
+```
+
+#### Exemple 3 : Récupérer 5 recettes
+```bash
+curl -X POST http://localhost:8000/api/recipe_get \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"quantity": 5, "offset": 0}'
+```
+
+### Relations entre les données
+
+- **Entité Recipe** : Les recettes sont récupérées depuis la table `Recipe` en base de données
+- **Client (Author)** : L'`author_id` fait référence à l'identifiant du client auteur via la relation `Recipe -> Client` (ManyToOne)
+- **Tri** : Les recettes sont triées par ID croissant pour garantir un ordre cohérent lors de la pagination
+
+### Notes importantes
+
+- **Pagination** : Utilisez `quantity` et `offset` pour implémenter la pagination côté client
+  - Page 1 : `{"quantity": 10, "offset": 0}` (recettes 1-10)
+  - Page 2 : `{"quantity": 10, "offset": 10}` (recettes 11-20)
+  - Page 3 : `{"quantity": 10, "offset": 20}` (recettes 21-30)
+- **Tableau vide** : Si aucune recette n'est trouvée (par exemple, si `offset` dépasse le nombre total de recettes), la réponse contiendra `{"recipes": []}`
+- **Performance** : Pour de grandes quantités de données, il est recommandé d'utiliser des valeurs raisonnables pour `quantity` (par exemple, entre 10 et 50)
+- **Tri** : Les recettes sont toujours triées par ID croissant, garantissant un ordre cohérent entre les requêtes
+
+---
+
 ## Notes générales
 
 - **Format des réponses** : Toutes les réponses sont au format JSON

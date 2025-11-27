@@ -1,0 +1,122 @@
+### Variables
+@baseUrl = http://localhost:8000
+@contentType = application/json
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQwNTIxODQsImV4cCI6MTc2NDA1NTc4NCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.bAlhVOc9RhJJwRjD5CtDKVRp4bT1nnt9y0oJIm5BGmgaa5Ybh9xBlOKVvfjDbgCdIIF8ZCnlQ4mKmng3fkamBWZMPotc_gw9A5sjM8hLsbdTa1gq-lPTtFyKSog2fjBFmYiletRyAXoi-EiIqq-kg-_7CWZ3nM5_d9Ta_-bCZqCF3PND4Z405S5PuXOjSIGaGYGbK_sACvpUDKUO1I41QmGxXuu1kWoLbu6BQymn0dvghUzcDzAp9gOT1mY4CNnWpw3GWnBA2lXh2J0JqO63hVPwYVi99jvHuH5OsUUkFfnTuOwghFEvhaMD9wqBMox2_V92iM5NdTxZ-Mu2HUawiA
+
+### IMPORTANT: Cette route récupère les recettes depuis la base de données
+### Assurez-vous d'avoir des recettes en base (via /save_recipe ou fixtures)
+
+### Récupérer les 10 premières recettes (offset 0)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 10,
+  "offset": 0
+}
+
+### Récupérer les 5 premières recettes (offset 0)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 5,
+  "offset": 0
+}
+
+### Récupérer les 10 recettes suivantes (offset 10)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 10,
+  "offset": 10
+}
+
+### Récupérer 1 recette à partir de l'offset 0
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 1,
+  "offset": 0
+}
+
+### Test avec quantity manquant (devrait retourner 400)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "offset": 0
+}
+
+### Test avec offset manquant (devrait retourner 400)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 10
+}
+
+### Test avec quantity négatif (devrait retourner 400)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": -5,
+  "offset": 0
+}
+
+### Test avec quantity à zéro (devrait retourner 400)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 0,
+  "offset": 0
+}
+
+### Test avec offset négatif (devrait retourner 400)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 10,
+  "offset": -1
+}
+
+### Test avec body vide (devrait retourner 400)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{}
+
+### Test sans token (devrait retourner 401)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+
+{
+  "quantity": 10,
+  "offset": 0
+}
+
+### Test avec token invalide (devrait retourner 401)
+POST {{baseUrl}}/api/recipe_get
+Content-Type: {{contentType}}
+Authorization: Bearer invalid_token_here
+
+{
+  "quantity": 10,
+  "offset": 0
+}
+
