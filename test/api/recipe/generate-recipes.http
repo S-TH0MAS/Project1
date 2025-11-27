@@ -8,7 +8,7 @@
 ### Assurez-vous d'avoir des items dans votre inventaire avant de tester
 
 ### Générer une recette avec un prompt personnalisé
-POST {{baseUrl}}/api/generate_recipes
+POST {{baseUrl}}/api/recipe/generate
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -17,7 +17,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Générer une recette avec un prompt détaillé
-POST {{baseUrl}}/api/generate_recipes
+POST {{baseUrl}}/api/recipe/generate
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -26,7 +26,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Générer une recette pour un dessert
-POST {{baseUrl}}/api/generate_recipes
+POST {{baseUrl}}/api/recipe/generate
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -35,14 +35,14 @@ Authorization: Bearer {{token}}
 }
 
 ### Test avec prompt manquant (devrait retourner 400)
-POST {{baseUrl}}/api/generate_recipes
+POST {{baseUrl}}/api/recipe/generate
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
 {}
 
 ### Test avec prompt vide (devrait retourner 400)
-POST {{baseUrl}}/api/generate_recipes
+POST {{baseUrl}}/api/recipe/generate
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -51,7 +51,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Test sans token (devrait retourner 401)
-POST {{baseUrl}}/api/generate_recipes
+POST {{baseUrl}}/api/recipe/generate
 Content-Type: {{contentType}}
 
 {
@@ -59,7 +59,7 @@ Content-Type: {{contentType}}
 }
 
 ### Test avec token invalide (devrait retourner 401)
-POST {{baseUrl}}/api/generate_recipes
+POST {{baseUrl}}/api/recipe/generate
 Content-Type: {{contentType}}
 Authorization: Bearer invalid_token_here
 

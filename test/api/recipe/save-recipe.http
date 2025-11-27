@@ -3,12 +3,12 @@
 @contentType = application/json
 @token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQwNTIxODQsImV4cCI6MTc2NDA1NTc4NCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.bAlhVOc9RhJJwRjD5CtDKVRp4bT1nnt9y0oJIm5BGmgaa5Ybh9xBlOKVvfjDbgCdIIF8ZCnlQ4mKmng3fkamBWZMPotc_gw9A5sjM8hLsbdTa1gq-lPTtFyKSog2fjBFmYiletRyAXoi-EiIqq-kg-_7CWZ3nM5_d9Ta_-bCZqCF3PND4Z405S5PuXOjSIGaGYGbK_sACvpUDKUO1I41QmGxXuu1kWoLbu6BQymn0dvghUzcDzAp9gOT1mY4CNnWpw3GWnBA2lXh2J0JqO63hVPwYVi99jvHuH5OsUUkFfnTuOwghFEvhaMD9wqBMox2_V92iM5NdTxZ-Mu2HUawiA
 
-### IMPORTANT: Vous devez d'abord générer une recette via POST /api/generate_recipes
+### IMPORTANT: Vous devez d'abord générer une recette via POST /api/recipe/generate
 ### pour obtenir un cache_key valide avant de tester cette route
 
 ### Sauvegarder une recette avec un cache_key valide
-### Remplacez {{cache_key}} par le cache_key obtenu depuis la réponse de /generate_recipes
-POST {{baseUrl}}/api/save_recipe
+### Remplacez {{cache_key}} par le cache_key obtenu depuis la réponse de /recipe/generate
+POST {{baseUrl}}/api/recipe/save
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -17,14 +17,14 @@ Authorization: Bearer {{token}}
 }
 
 ### Test avec cache_key manquant (devrait retourner 400)
-POST {{baseUrl}}/api/save_recipe
+POST {{baseUrl}}/api/recipe/save
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
 {}
 
 ### Test avec cache_key vide (devrait retourner 400)
-POST {{baseUrl}}/api/save_recipe
+POST {{baseUrl}}/api/recipe/save
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -33,7 +33,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Test avec cache_key invalide (devrait retourner 400 ou 404)
-POST {{baseUrl}}/api/save_recipe
+POST {{baseUrl}}/api/recipe/save
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -42,7 +42,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Test avec cache_key expiré ou inexistant (devrait retourner 404)
-POST {{baseUrl}}/api/save_recipe
+POST {{baseUrl}}/api/recipe/save
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -51,7 +51,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Test sans token (devrait retourner 401)
-POST {{baseUrl}}/api/save_recipe
+POST {{baseUrl}}/api/recipe/save
 Content-Type: {{contentType}}
 
 {
@@ -59,7 +59,7 @@ Content-Type: {{contentType}}
 }
 
 ### Test avec token invalide (devrait retourner 401)
-POST {{baseUrl}}/api/save_recipe
+POST {{baseUrl}}/api/recipe/save
 Content-Type: {{contentType}}
 Authorization: Bearer invalid_token_here
 

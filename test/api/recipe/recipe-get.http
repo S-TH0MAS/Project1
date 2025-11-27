@@ -4,10 +4,19 @@
 @token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQwNTIxODQsImV4cCI6MTc2NDA1NTc4NCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.bAlhVOc9RhJJwRjD5CtDKVRp4bT1nnt9y0oJIm5BGmgaa5Ybh9xBlOKVvfjDbgCdIIF8ZCnlQ4mKmng3fkamBWZMPotc_gw9A5sjM8hLsbdTa1gq-lPTtFyKSog2fjBFmYiletRyAXoi-EiIqq-kg-_7CWZ3nM5_d9Ta_-bCZqCF3PND4Z405S5PuXOjSIGaGYGbK_sACvpUDKUO1I41QmGxXuu1kWoLbu6BQymn0dvghUzcDzAp9gOT1mY4CNnWpw3GWnBA2lXh2J0JqO63hVPwYVi99jvHuH5OsUUkFfnTuOwghFEvhaMD9wqBMox2_V92iM5NdTxZ-Mu2HUawiA
 
 ### IMPORTANT: Cette route récupère les recettes depuis la base de données
-### Assurez-vous d'avoir des recettes en base (via /save_recipe ou fixtures)
+### Assurez-vous d'avoir des recettes en base (via /recipe/save ou fixtures)
 
-### Récupérer les 10 premières recettes (offset 0)
-POST {{baseUrl}}/api/recipe_get
+### Récupérer les 10 premières recettes (offset par défaut 0)
+POST {{baseUrl}}/api/recipe/get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 10
+}
+
+### Récupérer les 10 premières recettes avec offset explicite
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -17,7 +26,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Récupérer les 5 premières recettes (offset 0)
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -27,7 +36,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Récupérer les 10 recettes suivantes (offset 10)
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -37,7 +46,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Récupérer 1 recette à partir de l'offset 0
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -47,7 +56,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Test avec quantity manquant (devrait retourner 400)
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -55,17 +64,59 @@ Authorization: Bearer {{token}}
   "offset": 0
 }
 
-### Test avec offset manquant (devrait retourner 400)
-POST {{baseUrl}}/api/recipe_get
+### Récupérer les recettes favorites (mode = favorite)
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
 {
-  "quantity": 10
+  "quantity": 10,
+  "mode": "favorite"
+}
+
+### Récupérer les recettes favorites avec offset
+POST {{baseUrl}}/api/recipe/get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 5,
+  "offset": 0,
+  "mode": "favorite"
+}
+
+### Récupérer les recettes dont le client est auteur (mode = author)
+POST {{baseUrl}}/api/recipe/get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 10,
+  "mode": "author"
+}
+
+### Récupérer les recettes dont le client est auteur avec offset
+POST {{baseUrl}}/api/recipe/get
+Content-Type: {{contentType}}
+
+{
+  "quantity": 5,
+  "offset": 0,
+  "mode": "favorite"
+}
+
+### Récupérer toutes les recettes (mode = all)
+POST {{baseUrl}}/api/recipe/get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 10,
+  "mode": "all"
 }
 
 ### Test avec quantity négatif (devrait retourner 400)
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -75,7 +126,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Test avec quantity à zéro (devrait retourner 400)
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -85,7 +136,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Test avec offset négatif (devrait retourner 400)
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
@@ -94,15 +145,25 @@ Authorization: Bearer {{token}}
   "offset": -1
 }
 
+### Test avec mode invalide (devrait retourner 400)
+POST {{baseUrl}}/api/recipe/get
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+  "quantity": 10,
+  "mode": "invalid"
+}
+
 ### Test avec body vide (devrait retourner 400)
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
 {}
 
 ### Test sans token (devrait retourner 401)
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 
 {
@@ -111,7 +172,7 @@ Content-Type: {{contentType}}
 }
 
 ### Test avec token invalide (devrait retourner 401)
-POST {{baseUrl}}/api/recipe_get
+POST {{baseUrl}}/api/recipe/get
 Content-Type: {{contentType}}
 Authorization: Bearer invalid_token_here
 
