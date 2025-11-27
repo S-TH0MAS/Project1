@@ -25,6 +25,18 @@ class Client extends User
     #[ORM\OneToMany(targetEntity: Inventory::class, mappedBy: 'client', orphanRemoval: true)]
     private Collection $inventories;
 
+    /**
+     * @var Collection<int, Recipe>
+     */
+    #[ORM\OneToMany(targetEntity: Recipe::class, mappedBy: 'author', orphanRemoval: true)]
+    private Collection $recipes;
+
+    /**
+     * @var Collection<int, Recipe>
+     */
+    #[ORM\ManyToMany(targetEntity: Recipe::class, inversedBy: 'clients')]
+    private Collection $favorites;
+
     public function __construct()
     {
         // Important : Si User a un constructeur, on l'appelle
@@ -32,6 +44,8 @@ class Client extends User
 
         $this->clientItems = new ArrayCollection();
         $this->inventories = new ArrayCollection();
+        $this->recipes = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -102,6 +116,60 @@ class Client extends User
                 $inventory->setClient(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Recipe>
+     */
+    public function getRecipes(): Collection
+    {
+        return $this->recipes;
+    }
+
+    public function addRecipe(Recipe $recipe): static
+    {
+        if (!$this->recipes->contains($recipe)) {
+            $this->recipes->add($recipe);
+            $recipe->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecipe(Recipe $recipe): static
+    {
+        if ($this->recipes->removeElement($recipe)) {
+            // set the owning side to null (unless already changed)
+            if ($recipe->getAuthor() === $this) {
+                $recipe->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Recipe>
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(Recipe $favorite): static
+    {
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites->add($favorite);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(Recipe $favorite): static
+    {
+        $this->favorites->removeElement($favorite);
 
         return $this;
     }
