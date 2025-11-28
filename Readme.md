@@ -110,7 +110,7 @@ Fonctionnalités prévues dans les versions avancées :
 
 ### Backend (Symfony)
 
-* API Platform ou contrôleurs REST
+* Contrôleurs REST
 * Validation des données
 * Auth via JWT
 * ORM Doctrine + SQLite

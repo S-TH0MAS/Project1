@@ -2,12 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ClientItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClientItemRepository::class)]
-#[ApiResource]
 class ClientItem extends Item
 {
     // Note : Pas d'ID, pas de Name, pas de Category ici.
