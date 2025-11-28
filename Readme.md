@@ -1,3 +1,39 @@
+# Readme
+
+## Sommaire
+
+* [🎯 Objectif du projet](#objectif)
+
+* [🏗️ Architecture générale](#architecture)
+
+* [📁 Dépôts Git](#depots-git)
+
+* [🖼️ Maquettes](#maquettes)
+
+* [📊 Diagrammes](#diagrammes)
+
+* [🚀 Déploiement](#deploiement)
+
+* [🔐 Fonctionnalités principales](#fonctionnalites-principales)
+
+  * [Authentification utilisateur](#authentification)
+  * [Gestion de la réserve de nourriture](#gestion-reserve)
+  * [Fonctionnalités IA via Gemini](#fonctionnalites-ia)
+
+* [🚀 Vision long terme](#vision)
+
+* [🧩 Découpage Agile des versions](#decoupage-agile)
+
+* [📚 Stack technique](#stack-technique)
+
+* [📦 Livrables (à venir)](#livrables)
+
+* [✨ Conclusion](#conclusion)
+
+---
+
+<a id="objectif"></a>
+
 # Spécification du projet — Application de gestion de réserve alimentaire avec IA (Gemini)
 
 ## 🎯 Objectif du projet
@@ -5,6 +41,8 @@
 Ce projet consiste à développer une application web permettant aux utilisateurs de gérer leur réserve de nourriture et d'obtenir des suggestions de recettes grâce à l'API Gemini. L'application vise à réduire au maximum les interactions nécessaires de la part de l'utilisateur en automatisant la mise à jour de sa réserve.
 
 ---
+
+<a id="architecture"></a>
 
 ## 🏗️ Architecture générale
 
@@ -18,6 +56,8 @@ L'application sera conçue **en mobile first** afin d'assurer une expérience op
 
 ---
 
+<a id="depots-git"></a>
+
 ## 📁 Dépôts Git
 
 * **Backend Symfony :** [https://github.com/S-TH0MAS/Project1.git](https://github.com/S-TH0MAS/Project1.git)
@@ -25,12 +65,16 @@ L'application sera conçue **en mobile first** afin d'assurer une expérience op
 
 ---
 
+<a id="maquettes"></a>
+
 ## 🖼️ Maquettes
 
 * **Vers la maquette fonctionnelle V3** [https://S-TH0MAS.github.io/Project1](https://S-TH0MAS.github.io/Project1)
 * **Vers les images** [https://github.com/S-TH0MAS/Project1/tree/master/.source/maquettes](https://github.com/S-TH0MAS/Project1/tree/master/.source/maquettes)
 
 ---
+
+<a id="diagrammes"></a>
 
 ## 📊 Diagrammes
 
@@ -40,18 +84,35 @@ L'application sera conçue **en mobile first** afin d'assurer une expérience op
 
 ---
 
+<a id="deploiement"></a>
+
+## 🚀 Déploiement
+
+* **Déploiement en développement :** [https://github.com/S-TH0MAS/Project1/tree/master/.source/deployment/dev.md](https://github.com/S-TH0MAS/Project1/tree/master/.source/deployment/dev.md)
+* **Déploiement en production :** [https://github.com/S-TH0MAS/Project1/tree/master/.source/deployment/prod.md](https://github.com/S-TH0MAS/Project1/tree/master/.source/deployment/prod.md)
+
+---
+
+<a id="fonctionnalites-principales"></a>
+
 ## 🔐 Fonctionnalités principales
+
+<a id="authentification"></a>
 
 ### 1. Authentification utilisateur
 
 * Inscription / Connexion
 * Gestion de session
 
+<a id="gestion-reserve"></a>
+
 ### 2. Gestion de la réserve de nourriture
 
 * Consultation de la réserve en temps réel
 * Ajout manuel d'aliments
 * Mise à jour / suppression d'aliments
+
+<a id="fonctionnalites-ia"></a>
 
 ### 3. Fonctionnalités IA via Gemini
 
@@ -63,6 +124,8 @@ L'application sera conçue **en mobile first** afin d'assurer une expérience op
 * Mise à jour vocale de la réserve *(futur sprint)*
 
 ---
+
+<a id="vision"></a>
 
 ## 🚀 Vision long terme
 
@@ -77,6 +140,8 @@ Fonctionnalités prévues dans les versions avancées :
 
 ---
 
+<a id="decoupage-agile"></a>
+
 ## 🧩 Découpage Agile des versions
 
 ### **MVP (Version 1)**
@@ -89,7 +154,6 @@ Fonctionnalités prévues dans les versions avancées :
 
 * UI améliorée
 * Gestion administration
-
 
 ### **Version 3**
 
@@ -105,6 +169,8 @@ Fonctionnalités prévues dans les versions avancées :
 * Fonctionnalité vocale
 
 ---
+
+<a id="stack-technique"></a>
 
 ## 📚 Stack technique
 
@@ -130,6 +196,8 @@ Fonctionnalités prévues dans les versions avancées :
 
 ---
 
+<a id="livrables"></a>
+
 ## 📦 Livrables (à venir)
 
 * **Modélisation** : liste des entités + schéma UML/ER *(facultatif)*
@@ -139,6 +207,10 @@ Fonctionnalités prévues dans les versions avancées :
   * configuration de la base de données
   * migrations
 * **Démonstration orale** : 10–15 minutes
+
+---
+
+<a id="conclusion"></a>
 
 ## ✨ Conclusion
 
