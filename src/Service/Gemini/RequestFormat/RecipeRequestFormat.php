@@ -7,8 +7,6 @@ use Exception;
 
 class RecipeRequestFormat
 {
-    private const DEFAULT_MODEL = "gemini-2.5-flash";
-
     private const RESPONSE_FORMAT = [
         'type' => 'OBJECT',
         'properties' => [
@@ -69,7 +67,7 @@ class RecipeRequestFormat
         ];
 
         // Appel à Gemini avec le schéma JSON
-        $response = $this->geminiRequest->generateContent($contents, self::DEFAULT_MODEL, $configParams);
+        $response = $this->geminiRequest->generateContent($contents, GeminiRequest::DEFAULT_MODEL, $configParams);
 
         // Extraire et décoder la réponse JSON
         $responseText = $response['candidates'][0]['content']['parts'][0]['text'] ?? '';

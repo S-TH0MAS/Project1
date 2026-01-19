@@ -11,7 +11,7 @@ class GeminiRequest
     // URL de base de l'API Google Generative Language
     private const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
-    private const DEFAULT_MODEL = "gemini-2.5-flash";
+    const DEFAULT_MODEL = "gemini-3-flash-preview";
 
     public function __construct(
         private readonly ProxyAwareClient $proxyAwareClient,
@@ -43,7 +43,7 @@ class GeminiRequest
     /**
      * @throws Exception
      */
-    public function ask(string $prompt, string $model = 'gemini-2.5-flash'): string
+    public function ask(string $prompt, string $model = null): string
     {
         $payload = [
             [
@@ -54,6 +54,9 @@ class GeminiRequest
             ]
         ];
 
+        if ($model === null) {
+            $model = self::DEFAULT_MODEL;
+        }
         $response = $this->generateContent($payload, $model);
 
         // Extraction sécurisée du texte de la réponse
