@@ -85,8 +85,12 @@ readonly class ProxyAwareClient
 
         } catch (ClientExceptionInterface $e) {
             // ERREUR CLIENT (4xx)
+            $rawContent = ($response) ? $response->getContent(false) : 'Pas de contenu';
             throw new Exception(
-                sprintf('[API CLIENT ERROR] Le serveur a rejeté la requête (4xx) : %s', $e->getMessage()),
+                sprintf('[API CLIENT ERROR] Le serveur a rejeté la requête (4xx) : %s. Response: %s', 
+                    $e->getMessage(),
+                    substr($rawContent, 0, 1000)
+                ),
                 0,
                 $e
             );
