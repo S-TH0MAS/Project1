@@ -1,0 +1,69 @@
+### Variables
+@baseUrl = http://localhost:8000
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQwNTIxODQsImV4cCI6MTc2NDA1NTc4NCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdEB0ZXN0Lm1haWwifQ.bAlhVOc9RhJJwRjD5CtDKVRp4bT1nnt9y0oJIm5BGmgaa5Ybh9xBlOKVvfjDbgCdIIF8ZCnlQ4mKmng3fkamBWZMPotc_gw9A5sjM8hLsbdTa1gq-lPTtFyKSog2fjBFmYiletRyAXoi-EiIqq-kg-_7CWZ3nM5_d9Ta_-bCZqCF3PND4Z405S5PuXOjSIGaGYGbK_sACvpUDKUO1I41QmGxXuu1kWoLbu6BQymn0dvghUzcDzAp9gOT1mY4CNnWpw3GWnBA2lXh2J0JqO63hVPwYVi99jvHuH5OsUUkFfnTuOwghFEvhaMD9wqBMox2_V92iM5NdTxZ-Mu2HUawiA
+
+### IMPORTANT: Obtenez d'abord un token via POST /user/login
+### Remplacez {{token}} ci-dessous par le token obtenu, ou utilisez une variable d'environnement
+
+### Ajouter des items à l'inventaire via un document (ticket de caisse)
+POST {{baseUrl}}/api/inventories/add-by-doc
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="document"; filename="ticket1.jpg"
+Content-Type: image/jpeg
+
+< ./ticket1.jpg
+--MyBoundary--
+
+### Test avec un fichier PDF (si vous avez un PDF de test)
+# POST {{baseUrl}}/api/inventories/add-by-doc
+# Authorization: Bearer {{token}}
+# Content-Type: multipart/form-data; boundary=MyBoundary
+#
+# --MyBoundary
+# Content-Disposition: form-data; name="document"; filename="document.pdf"
+# Content-Type: application/pdf
+#
+# < ./document.pdf
+# --MyBoundary--
+
+### Test sans fichier (devrait retourner 400)
+POST {{baseUrl}}/api/inventories/add-by-doc
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+### Test avec fichier trop volumineux (> 10 Mo) - devrait retourner 400
+# POST {{baseUrl}}/api/inventories/add-by-doc
+# Authorization: Bearer {{token}}
+#
+# < ./large-file.jpg
+
+### Test avec type de fichier non autorisé (ex: .txt) - devrait retourner 400
+# POST {{baseUrl}}/api/inventories/add-by-doc
+# Authorization: Bearer {{token}}
+#
+# < ./document.txt
+
+### Test sans token (devrait retourner 401)
+POST {{baseUrl}}/api/inventories/add-by-doc
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="document"; filename="ticket1.jpg"
+Content-Type: image/jpeg
+
+< ./ticket1.jpg
+--MyBoundary--
+
+### Test avec token invalide (devrait retourner 401)
+POST {{baseUrl}}/api/inventories/add-by-doc
+Authorization: Bearer invalid_token_here
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="document"; filename="ticket1.jpg"
+Content-Type: image/jpeg
+
+< ./ticket1.jpg
+--MyBoundary--

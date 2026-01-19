@@ -6,9 +6,12 @@ use App\DTO\Api\Inventory\AddInventoryDto;
 use App\DTO\Api\Inventory\RemoveInventoryDto;
 use App\Entity\Client;
 use App\Entity\Inventory;
+use App\Repository\CategoryRepository;
 use App\Repository\ClientItemRepository;
 use App\Repository\InventoryRepository;
 use App\Repository\ItemRepository;
+use App\Service\Gemini\RequestFormat\IngredientRequestFormat;
+use App\Service\Validator\DocumentValidator;
 use App\Service\Validator\RequestValidator;
 use App\Trait\ApiResponseTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -273,6 +276,83 @@ class InventoryController extends AbstractController
                     'item_id' => $itemId,
                     'quantity' => $newQuantity
                 ]
+            ],
+            Response::HTTP_OK
+        );
+    }
+
+    #[Route('/add-by-doc', name: 'api_inventories_add_by_doc', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function addByDoc(
+        Request $request,
+        DocumentValidator $documentValidator,
+        CategoryRepository $categoryRepository,
+        ItemRepository $itemRepository,
+        ClientItemRepository $clientItemRepository,
+        IngredientRequestFormat $ingredientRequestFormat
+    ): JsonResponse {
+        $user = $this->getUser();
+        
+        if (!$user instanceof Client) {
+            return $this->jsonError(Response::HTTP_FORBIDDEN, 'Forbidden', 'User must be a client');
+        }
+
+        // Récupérer le fichier uploadé
+        $uploadedFile = $request->files->get('document');
+
+        // Types MIME autorisés : images + PDF
+        $allowedMimeTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'application/pdf'
+        ];
+
+        // Taille maximale : 10 Mo
+        $maxSize = 10 * 1024 * 1024;
+
+        // Valider le document
+        try {
+            $documentValidator->validate($uploadedFile, $allowedMimeTypes, $maxSize);
+        } catch (\Exception $e) {
+            return $this->jsonException($e);
+        }
+
+        // Récupérer toutes les catégories
+        $categories = $categoryRepository->findAll();
+
+        // Récupérer tous les items (Item non client)
+        $defaultItems = $itemRepository->createQueryBuilder('i')
+            ->where('i INSTANCE OF App\Entity\Item')
+            ->getQuery()
+            ->getResult();
+
+        // Récupérer tous les items du client (ClientItem)
+        $clientItems = $clientItemRepository->findBy(['client' => $user]);
+
+        // Concaténer les deux listes d'items
+        $allItems = array_merge($defaultItems, $clientItems);
+
+        // Convertir le fichier en base64
+        $mimeType = $uploadedFile->getMimeType();
+        $fileContent = file_get_contents($uploadedFile->getPathname());
+        $base64Data = base64_encode($fileContent);
+
+        // Appeler IngredientRequestFormat pour analyser le document
+        try {
+            $ingredients = $ingredientRequestFormat->getIngredientList(
+                $categories,
+                $allItems,
+                $mimeType,
+                $base64Data
+            );
+        } catch (\Exception $e) {
+            return $this->jsonException($e);
+        }
+
+        return new JsonResponse(
+            [
+                'ingredients' => $ingredients
             ],
             Response::HTTP_OK
         );
