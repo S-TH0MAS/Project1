@@ -484,6 +484,155 @@ Si l'inventory n'existe pas, la route retourne un succès sans erreur :
 
 ---
 
+## 4. Analyser un document pour extraire des ingrédients
+
+### Route
+```
+POST /api/inventories/add-by-doc
+```
+
+### Méthode
+`POST`
+
+### Description
+Cette route permet d'envoyer un document (image ou PDF, par exemple un ticket de caisse) afin d'analyser son contenu et d'en extraire une liste d'ingrédients.
+La route ne modifie pour l'instant **pas** l'inventaire : elle retourne uniquement la liste structurée des ingrédients détectés par l'IA (Gemini).
+
+### Paramètres
+
+#### Body (multipart/form-data)
+
+| Champ      | Type        | Requis | Description                                                                 |
+|-----------|-------------|--------|-----------------------------------------------------------------------------|
+| `document`| fichier     | Oui    | Fichier image ou PDF à analyser (taille maximale : 10 Mo)                  |
+
+### Types de fichiers acceptés
+
+- Images : `image/jpeg`, `image/png`, `image/webp`
+- PDF : `application/pdf`
+
+### Headers requis
+
+| Header         | Type   | Requis | Description                                                          |
+|----------------|--------|--------|----------------------------------------------------------------------|
+| `Authorization`| string | Oui    | Token JWT obtenu via `POST /user/login` au format `Bearer <token>`  |
+| `Content-Type` | string | Oui    | Doit être `multipart/form-data`                                     |
+
+### Exemple de requête (HTTP client)
+
+```http
+POST /api/inventories/add-by-doc
+Authorization: Bearer <votre_token_jwt>
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="document"; filename="ticket1.jpg"
+Content-Type: image/jpeg
+
+< ./ticket1.jpg
+--MyBoundary--
+```
+
+### Retour
+
+#### Succès (200 OK)
+```json
+{
+  "ingredients": [
+    {
+      "name": "Pomme",
+      "category_id": 1,
+      "existing_item_id": 12,
+      "quantity": 3,
+      "type": "EXISTING_ITEM"
+    },
+    {
+      "name": "Farine",
+      "category_id": 5,
+      "existing_item_id": null,
+      "quantity": 1,
+      "type": "NEW_ITEM"
+    }
+  ]
+}
+```
+
+**Structure de la réponse :**
+
+Chaque entrée du tableau `ingredients` contient :
+
+- `name` : Nom de l'ingrédient détecté (string)
+- `category_id` : ID de la catégorie associée (integer, doit correspondre à une catégorie existante)
+- `existing_item_id` : 
+  - ID d'un item existant si l'ingrédient correspond à un item déjà présent en base
+  - `null` si l'ingrédient est nouveau
+- `quantity` : Quantité estimée de l'ingrédient (integer, généralement >= 1)
+- `type` : Type d'ingrédient analysé (string) :
+  - `"EXISTING_ITEM"` si `existing_item_id` n'est pas null (correspond à un item déjà existant)
+  - `"NEW_ITEM"` si `existing_item_id` est null (nouvel ingrédient à créer potentiellement)
+
+> **Important** : La route retourne uniquement une analyse du document.  
+> Aucune création ou modification d'items / d'inventaire n'est effectuée automatiquement à ce stade.
+
+#### Erreurs possibles
+
+> **Note** : Toutes les erreurs suivent un format uniformisé. Pour plus de détails, consultez la [documentation sur les réponses d'erreur](error-responses.md).
+
+**400 Bad Request** - Fichier manquant ou invalide
+```json
+{
+  "code": 400,
+  "error": "Bad Request",
+  "message": "Aucun fichier fourni"
+}
+```
+
+**400 Bad Request** - Fichier trop volumineux
+```json
+{
+  "code": 400,
+  "error": "Bad Request",
+  "message": "Le fichier est trop volumineux. Taille maximale autorisée : 10 Mo"
+}
+```
+
+**400 Bad Request** - Type de fichier non autorisé
+```json
+{
+  "code": 400,
+  "error": "Bad Request",
+  "message": "Type de fichier non autorisé. Types autorisés : image/jpeg, image/png, image/webp, image/gif, application/pdf"
+}
+```
+
+**400 Bad Request** - Erreur côté API Gemini (analyse du document)
+```json
+{
+  "code": 400,
+  "error": "Bad Request",
+  "message": "[API CLIENT ERROR] Le serveur a rejeté la requête (4xx) : ... Response: {...}"
+}
+```
+
+**401 Unauthorized** - Token manquant ou invalide
+```json
+{
+  "code": 401,
+  "message": "JWT Token not found"
+}
+```
+
+**403 Forbidden** - L'utilisateur n'est pas un Client
+```json
+{
+  "code": 403,
+  "error": "Forbidden",
+  "message": "User must be a client"
+}
+```
+
+---
+
 ## Notes générales
 
 - **Format des réponses** : Toutes les réponses sont au format JSON
