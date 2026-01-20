@@ -201,7 +201,22 @@ $itemsJson
      - Invente un `name` clair.
      - Choisis le `category_id` le plus pertinent (format string).
 
-4. Estime la quantité.
+4. **ESTIMATION DE LA QUANTITÉ (Unités Consommables)**
+    Ton objectif est de définir une quantité en **nombre d'unités (pièces)** consommables.
+
+    **CAS A : Produits au poids (Fruits, Légumes, Vrac)**
+    - Si un poids est indiqué (ex: "1.2 kg"), tu dois **ESTIMER le nombre de pièces** que cela représente en te basant sur le poids moyen standard de cet aliment.
+      - *Exemple : "Bananes 1.2 kg" (Moyenne ~150g/unité) -> quantity: 8*
+      - *Exemple : "Tomates 500g" (Moyenne ~100g/unité) -> quantity: 5*
+    - Si l'estimation est impossible (ex: "Viande hachée vrac"), mets `1`.
+    
+    **CAS B : Produits unitaires et Multipacks (Boîtes, Packs, Lots)**
+    - **Détecte les lots** : Cherche des mentions comme "Pack", "Lot", "x6", "6x" (ex: "Pack 6 briques lait").
+    - **Calcule le TOTAL** : Multiplie le nombre de packs achetés par le contenu du pack.
+      - *Exemple "1 Pack de 6 laits" -> quantity: 6* (1 pack * 6 unités)
+      - *Exemple "2 Packs de 6 laits" -> quantity: 12* (2 packs * 6 unités)
+      - *Exemple "Lot de 4 yaourts" -> quantity: 4*
+    - Si c'est un produit simple sans mention de lot (ex: "1 Bouteille d'huile"), la quantité est `1`.
 
 # SORTIE
 Uniquement le tableau JSON.
