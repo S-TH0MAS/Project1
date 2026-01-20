@@ -174,7 +174,7 @@ class IngredientRequestFormat
 
         return <<<PROMPT
 # RÔLE
-Tu es un expert en inventaire culinaire. Analyse le document (Image/PDF) pour lister les ingrédients.
+Tu es un expert en inventaire culinaire. Analyse le document (Image/PDF/Audio) pour lister les ingrédients.
 
 # CONTEXTE 1 : CATÉGORIES
 Voici la liste des catégories disponibles au format JSON :
@@ -186,6 +186,9 @@ $itemsJson
 
 # TÂCHE
 1. Détecte les produits visibles ou listés.
+    - **SI IMAGE/PDF** : Détecte les produits visibles ou listés sur le ticket.
+    - **SI AUDIO** : Écoute la voix, transcris la liste de courses ou l'inventaire dicté et extrais les produits mentionnés.
+
 2. **FILTRE ALIMENTAIRE STRICT** :
    - Tu ne dois conserver **QUE** les produits comestibles (nourriture, boissons, épices).
    - **EXCLUS** tout ce qui n'est pas mangeable (produits ménagers, emballages, etc.).
@@ -204,6 +207,13 @@ $itemsJson
 4. **ESTIMATION DE LA QUANTITÉ (Unités Consommables)**
     Ton objectif est de définir une quantité en **nombre d'unités (pièces)** consommables.
 
+    **POUR L'AUDIO (Spécifique)** :
+    - Si l'utilisateur dit "Trois boîtes de tomates", quantity = 3.
+    - Si l'utilisateur dit "Du lait" sans préciser, quantity = 1.
+    - Si l'utilisateur dit "500 grammes de beurre", applique la règle de conversion poids ci-dessous.
+
+    **RÈGLES DE CALCUL (Image & Audio)** :
+    
     **CAS A : Produits au poids (Fruits, Légumes, Vrac)**
     - Si un poids est indiqué (ex: "1.2 kg"), tu dois **ESTIMER le nombre de pièces** que cela représente en te basant sur le poids moyen standard de cet aliment.
       - *Exemple : "Bananes 1.2 kg" (Moyenne ~150g/unité) -> quantity: 8*

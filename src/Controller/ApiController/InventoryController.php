@@ -302,10 +302,27 @@ class InventoryController extends AbstractController
 
         // Types MIME autorisés : images + PDF
         $allowedMimeTypes = [
+            // Images
             'image/jpeg',
             'image/png',
             'image/webp',
-            'application/pdf'
+            'image/heic', // Utile pour iPhone
+            'image/heif',
+
+            // Documents
+            'application/pdf',
+
+            // Audio (Gemini supporte : WAV, MP3, AAC, FLAC, OGG, M4A)
+            'audio/mpeg',    // MP3 standard
+            'audio/mp3',     // Variante MP3
+            'audio/wav',     // WAV standard
+            'audio/x-wav',   // Variante WAV
+            'audio/ogg',     // OGG
+            'audio/aac',     // AAC
+            'audio/m4a',     // Apple Voice Memos (iPhone)
+            'audio/x-m4a',   // Variante M4A
+            'audio/mp4',     // Parfois l'audio M4A est détecté comme MP4 container
+            'audio/flac'     // Haute qualité
         ];
 
         // Taille maximale : 10 Mo

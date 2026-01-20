@@ -16,6 +16,18 @@ Content-Type: image/jpeg
 < ./ticket1.jpg
 --MyBoundary--
 
+
+### Ajouter des items à l'inventaire via un document (audio)
+POST {{baseUrl}}/api/inventories/add-by-doc
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="document"; filename="vocal1.mp3"
+Content-Type: audio/mp3
+
+< ./vocal1.mp3
+--MyBoundary--
+
 ### Test avec un fichier PDF (si vous avez un PDF de test)
 # POST {{baseUrl}}/api/inventories/add-by-doc
 # Authorization: Bearer {{token}}
