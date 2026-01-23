@@ -26,8 +26,6 @@
 
 * [📚 Stack technique](#stack-technique)
 
-* [📦 Livrables (à venir)](#livrables)
-
 * [✨ Conclusion](#conclusion)
 
 ---
@@ -193,20 +191,6 @@ Fonctionnalités prévues dans les versions avancées :
 
 * Génération de texte (recettes, analyses)
 * Extraction sémantique sur ticket de caisse (OCR + analyse)
-
----
-
-<a id="livrables"></a>
-
-## 📦 Livrables (à venir)
-
-* **Modélisation** : liste des entités + schéma UML/ER *(facultatif)*
-* **Code source** dans un dépôt Git avec README contenant :
-
-  * instructions d'installation
-  * configuration de la base de données
-  * migrations
-* **Démonstration orale** : 10–15 minutes
 
 ---
 
